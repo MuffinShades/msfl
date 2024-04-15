@@ -1,4 +1,5 @@
-# byte-wizard
+# msfl
+
 C++ File encoder and decoder library for many popular file types
 
 This library is planned to support the following file types:
@@ -54,6 +55,10 @@ I almost have:
 Deflate for encoding png, zip, and other compressed formats
 
 .png
+
+This library will also include the following library functions:
+
+zlib -> Inflate and Deflate
 .db
 .zip
 

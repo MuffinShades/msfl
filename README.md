@@ -11,7 +11,7 @@ This library is planned to support the following file types:
 .ini
 .inf
 .cfg
-.properties (M)
+.properties
 .pak (M)
 .json
 .xml
@@ -37,9 +37,9 @@ I may add these files after i add the ones above
 .pdf
 .doc
 
-Currently I have implented
+#Currently I have implented
 
-Inflate for decoding png, zip, and other compressed formats
+Deflate and Inflate for decoding png, zip, and other compressed formats
 
 .txt
 .bin
@@ -48,15 +48,13 @@ Inflate for decoding png, zip, and other compressed formats
 .cfg
 .properties
 .pak
-.json
+.json (> 1mb / s)
 
-I almost have:
-
-Deflate for encoding png, zip, and other compressed formats
+#I almost have:
 
 .png
 
-This library will also include the following library functions:
+#This library will also include the following library functions:
 
 zlib -> Inflate and Deflate
 .db

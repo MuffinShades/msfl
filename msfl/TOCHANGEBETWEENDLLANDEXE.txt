@@ -1,0 +1,2 @@
+Make sure to got to Properties -> Linker -> System and switch the subsystem to window if dll and console if exe
+also define MSFL_EXPORTS in the precompiled section if compiling to dll if not remove it

@@ -37,7 +37,7 @@ I may add these files after i add the ones above
 .pdf
 .doc
 
-#Currently I have implented
+# Currently I have implented
 
 Deflate and Inflate for decoding png, zip, and other compressed formats
 
@@ -50,11 +50,11 @@ Deflate and Inflate for decoding png, zip, and other compressed formats
 .pak
 .json (> 1mb / s)
 
-#I almost have:
+# I almost have:
 
 .png
 
-#This library will also include the following library functions:
+# This library will also include the following library functions:
 
 zlib -> Inflate and Deflate
 .db

@@ -1,9 +1,8 @@
-#include "pch.h"
-#include "Compress.h"
 #include "FileWriter.h"
+#include "balloon.hpp"
 
-struct RawBytes FileWriter::ReadBytesFromBinFile(std::string path) {
-	RawBytes res;
+arr_container<byte> FileWriter::ReadBytesFromBinFile(std::string path) {
+	arr_container<byte> res;
 
 	if (path != "") {
 		std::ifstream _f(path, std::ios::binary);
@@ -12,12 +11,12 @@ struct RawBytes FileWriter::ReadBytesFromBinFile(std::string path) {
 			_f.seekg(0, std::ios::end);
 
 			long len = _f.tellg();
-			res.len = len;
+			res.sz = len;
 
 			_f.seekg(0, std::ios::beg);
 
-			res.bytes = new unsigned char[len];
-			_f.read((char*)res.bytes, len);
+			res.dat = new unsigned char[len];
+			_f.read((char*)res.dat, len);
 		}
 
 		_f.close();
@@ -44,8 +43,9 @@ bool FileWriter::WriteToBinFile(std::string path, unsigned char* bytes, int len)
 	return true;
 }
 
-struct RawBytes FileWriter::ReadBytesFromBinFileLPCWSTR(LPCWSTR path) {
-	RawBytes res;
+#ifdef WIN32
+arr_container<byte> FileWriter::ReadBytesFromBinFileLPCWSTR(LPCWSTR path) {
+	arr_container<byte> res;
 
 	if (path != L"") {
 		std::ifstream _f(path, std::ios::binary);
@@ -54,12 +54,12 @@ struct RawBytes FileWriter::ReadBytesFromBinFileLPCWSTR(LPCWSTR path) {
 			_f.seekg(0, std::ios::end);
 
 			long len = _f.tellg();
-			res.len = len;
+			res.sz = len;
 
 			_f.seekg(0, std::ios::beg);
 
-			res.bytes = new unsigned char[len];
-			_f.read((char*)res.bytes, len);
+			res.dat = new unsigned char[len];
+			_f.read((char*)res.dat, len);
 		}
 
 		_f.close();
@@ -85,3 +85,5 @@ bool FileWriter::WriteToBinFileLPCWSTR(LPCWSTR path, unsigned char* bytes, int l
 
 	return true;
 }
+
+#endif

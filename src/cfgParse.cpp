@@ -1,5 +1,4 @@
-#include "pch.h"
-#include "cfgParse.h"
+#include "cfgParse.hpp"
 
 //from https://stackoverflow.com/questions/5343190/how-do-i-replace-all-instances-of-a-string-with-another-string
 void _stringReplaceAll(std::string& str, std::string replaceToken) {

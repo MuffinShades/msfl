@@ -1,6 +1,5 @@
-#include "pch.h"
 #include "BinUtility.h"
-
+#include <iostream>
 
 template<class _T> unsigned char* BinUtility::GetValBytes(_T val) {
 	unsigned char* _bytes = new unsigned char[sizeof(val)];

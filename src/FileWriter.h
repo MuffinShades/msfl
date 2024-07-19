@@ -1,11 +1,15 @@
 #pragma once
 #include <iostream>
 #include <fstream>
-#include <windows.h>
+#include "balloon.hpp"
 
 class FileWriter {
-	bool WriteToBinFile(std::string path, unsigned char* bytes, int len);
-	struct RawBytes ReadBytesFromBinFile(std::string path);
-	bool WriteToBinFileLPCWSTR(LPCWSTR path, unsigned char* bytes, int len);
-	struct RawBytes ReadBytesFromBinFileLPCWSTR(LPCWSTR path);
+public:
+	static bool WriteToBinFile(std::string path, unsigned char* bytes, int len);
+	static arr_container<byte> ReadBytesFromBinFile(std::string path);
+
+#ifdef WIN32
+	static bool WriteToBinFileLPCWSTR(LPCWSTR path, unsigned char* bytes, int len);
+	static arr_container<byte> ReadBytesFromBinFileLPCWSTR(LPCWSTR path);
+#endif
 };

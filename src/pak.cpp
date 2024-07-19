@@ -12,12 +12,12 @@
  * 
  */
 
-#include "pch.h"
-#include "pak.h"
-#include "Compress.h"
+#include "pak.hpp"
+#include "balloon.hpp"
 #include "FileWriter.h"
 #include "BinUtility.h"
 #include <chrono>
+#include <time.h>
 
 template<typename _T> void CpyToBuffer(_T* buffer, _T* val, int valLen, int& bufferStart) {
 	memcpy(buffer+bufferStart, val, valLen);
@@ -73,6 +73,7 @@ int pak::PackToFile(std::string src, PakStructure data) {
 	//load in file
 	std::fstream _targetFile;
 	_targetFile = std::fstream(src, std::ios::out | std::ios::binary);
+	//std::cout << "Paking to directory: " << src << std::endl;
 
 	/*if (!_targetFile.good()) {
 		_targetFile.close();
@@ -124,7 +125,12 @@ int pak::PackToFile(std::string src, PakStructure data) {
 	//get time
 	auto _now = std::chrono::system_clock::now();
 	time_t _time = std::chrono::system_clock::to_time_t(_now);
-	tm local_time = *localtime(&_time);
+	tm local_time;
+#ifdef WIN32
+	localtime_s(&local_time, &_time);
+#else
+	localtime_r(&_time, &local_time);
+#endif
 
 	//construct the data
 	_Date cur_date;
@@ -136,7 +142,7 @@ int pak::PackToFile(std::string src, PakStructure data) {
 	cur_date.month = local_time.tm_mon+1;
 	cur_date.year = local_time.tm_year+1900;
 
-	std::cout << (int)cur_date.month << "/" << (int)cur_date.day << "/" << (int)cur_date.year << "   " << (int)cur_date.hr << ":" << (int)cur_date.min << ":" << (int)cur_date.s << std::endl;
+	//std::cout << (int)cur_date.month << "/" << (int)cur_date.day << "/" << (int)cur_date.year << "   " << (int)cur_date.hr << ":" << (int)cur_date.min << ":" << (int)cur_date.s << std::endl;
 
 	//add date info
 	unsigned char* tempBytes = GetValBytes(cur_date.ms);
@@ -187,8 +193,8 @@ int pak::PackToFile(std::string src, PakStructure data) {
 	//copy over file header
 	_targetFile.write((char*)pak_header, allocLen);
 
-	std::cout << "Pak Header len: " << allocLen << std::endl;
-	std::cout << "Writing to Pak loc: " << src << std::endl;
+	//std::cout << "Pak Header len: " << allocLen << std::endl;
+	//std::cout << "Writing to Pak loc: " << src << std::endl;
 
 	//header is complete now pak individual files
 	long summativeSize = 0;
@@ -196,7 +202,7 @@ int pak::PackToFile(std::string src, PakStructure data) {
 	for (int i = 0; i < data.files.size(); i++) {
 		summativeSize += data.files[i].fSize;
 
-		std::cout << "fSize: " << data.files[i].fSize << std::endl;
+		//std::cout << "fSize: " << data.files[i].fSize << std::endl;
 
 		//compute header length
 		int hLen = 0;
@@ -272,73 +278,24 @@ int pak::PackToFile(std::string src, PakStructure data) {
 		switch (data.files[i].compressType) {
 
 			//compress using huffman
-			case COMPRESSION_HUFFMAN: {
-				HuffmanResult _huffCompRes = Huffman::Encode(
-					data.files[i].fData, 
-					data.files[i].fSize
-				);
-
-				if (_huffCompRes.bytes != nullptr && _huffCompRes.len > 0) {
-					RawBytes fByteData = _huffCompRes.GetFullByteResult();
-
-					compressLen = fByteData.len;
-					compressedBytes = new unsigned char[fByteData.len];
-					memcpy(compressedBytes, fByteData.bytes, compressLen);
-
-					delete[] fByteData.bytes;
+			case 1: {
+				compressLen = data.files[i].fSize;
+				unsigned int* uData = new unsigned int[compressLen];
+				for (size_t b = 0; b < compressLen; b++)
+					uData[b] = (unsigned int)data.files[i].fData[b];
+				ZResult deflateDat = Zlib::Deflate(uData, compressLen, 15, data.files[i].compressionLevel);
+				delete[] uData;
+				//std::cout << std::endl;
+				compressedBytes = new unsigned char[deflateDat.len];
+				compressLen = deflateDat.len;
+				//std::cout << "dfz: " << data.files[i].fSize << std::endl;
+				for (size_t b = 0; b < deflateDat.len; b++) {
+					compressedBytes[b] = (unsigned char)deflateDat.bytes[b];
+					//std::cout << (int)compressedBytes[b] << " ";
 				}
-				else {
-					compressLen = data.files[i].fSize;
-					compressedBytes = new unsigned char[compressLen];
-					memcpy(compressedBytes, data.files[i].fData, compressLen);
-				}
-
-				if (_huffCompRes.bytes != nullptr) 
-					delete[] _huffCompRes.bytes;
-
-				break;
-			}
-			case COMPRESSION_LZSS: {
-				lzss_settings compressSettings;
-
-				compressSettings.BYTES_PER_BUFFER = data.files[i].compressionSettings.BYTES_PER_BUFFER;
-				compressSettings.b_buffer = data.files[i].compressionSettings.b_buffer;
-				compressSettings.s_buffer = data.files[i].compressionSettings.s_buffer;
-
-				lzss_result _compRes = lzss::compress(data.files[i].fData, data.files[i].fSize, compressSettings);
-
-				if (_compRes.bytes != nullptr && _compRes.len > 0 && (_compRes.comp_ratio > 1.0f || data.files[i].compressionSettings.alwaysCompress)) {
-					compressLen = _compRes.len;
-					compressedBytes = new unsigned char[_compRes.len];
-					memcpy(compressedBytes, _compRes.bytes, compressLen);
-				}
-				else {
-					compressLen = data.files[i].fSize;
-					compressedBytes = new unsigned char[compressLen];
-					memcpy(compressedBytes, data.files[i].fData, compressLen);
-				}
-
-				if (_compRes.bytes != nullptr) delete[] _compRes.bytes;
-
-				break;
-			}
-			case COMPRESSION_MZIP: {
-
-				RawBytes _mzipRes = mzip::Encode(data.files[i].fData, data.files[i].fSize, data.files[i].compressionSettings);
-
-				if (_mzipRes.len > 0 && _mzipRes.bytes != nullptr) {
-					compressLen = _mzipRes.len;
-					compressedBytes = new unsigned char[_mzipRes.len];
-					memcpy(compressedBytes, _mzipRes.bytes, compressLen);
-				}
-				else {
-					compressLen = data.files[i].fSize;
-					compressedBytes = new unsigned char[compressLen];
-					memcpy(compressedBytes, data.files[i].fData, compressLen);
-				}
-
-				if (_mzipRes.bytes != nullptr) delete[] _mzipRes.bytes;
-
+				//std::cout << std::endl;
+				delete[] deflateDat.bytes;
+				//std::cout << "Compression Done!" << std::endl;
 				break;
 			}
 			default: {
@@ -563,70 +520,24 @@ PakStructure pak::ExtractContents(std::string src) {
 
 		//now uncompress even funner!
 		switch (_file.compressType) {
-			case COMPRESSION_HUFFMAN: {
-				HuffmanResult _hcRes = Huffman::Decode(
-					(unsigned char*) _ucFDat,
-					_file.fSize
-				);
-
-				if (_hcRes.bytes != nullptr && _hcRes.len > 0) {
-					_file.fSize = _hcRes.len;
-					_file.fData = new unsigned char[_file.fSize];
-					memcpy(_file.fData, _hcRes.bytes, _file.fSize);
-					delete[] _hcRes.bytes;
-					delete[] _ucFDat;
+			case 1: {
+				unsigned int* uData = new unsigned int[_file.fSize];
+				
+				//std::cout << std::endl;
+				for (size_t i = 0; i < _file.fSize; i++) {
+					uData[i] = (unsigned int)(unsigned char)_ucFDat[i];
+					//std::cout << uData[i] << " ";
 				}
-				else {
-					_file.fData = new unsigned char[_file.fSize];
-					memcpy(_file.fData, _ucFDat, _file.fSize);
-					delete[] _ucFDat;
-				}
-
-				break;
-			}
-
-			//TODO add settings
-			case COMPRESSION_LZSS: {
-				lzss_result _lcRes = lzss::decompress(
-					(unsigned char*)_ucFDat,
-					_file.fSize
-				);
-
-				if (_lcRes.bytes != nullptr && _lcRes.len > 0) {
-					_file.fSize = _lcRes.len;
-					_file.fData = new unsigned char[_file.fSize];
-					memcpy(_file.fData, _lcRes.bytes, _file.fSize);
-					delete[] _lcRes.bytes;
-					delete[] _ucFDat;
-				}
-				else {
-					_file.fData = new unsigned char[_file.fSize];
-					memcpy(_file.fData, _ucFDat, _file.fSize);
-					delete[] _ucFDat;
-				}
-
-				break;
-			}
-
-			case COMPRESSION_MZIP: {
-				RawBytes _mcRes = mzip::Decode(
-					(unsigned char*)_ucFDat,
-					_file.fSize
-				);
-
-				if (_mcRes.bytes != nullptr && _mcRes.len > 0) {
-					_file.fSize = _mcRes.len;
-					_file.fData = new unsigned char[_file.fSize];
-					memcpy(_file.fData, _mcRes.bytes, _file.fSize);
-					delete[] _mcRes.bytes;
-					delete[] _ucFDat;
-				}
-				else {
-					_file.fData = new unsigned char[_file.fSize];
-					memcpy(_file.fData, _ucFDat, _file.fSize);
-					delete[] _ucFDat;
-				}
-
+				//std::cout << std::endl;
+				ZResult *inflateDat = Zlib::Inflate(uData, _file.fSize);
+				delete[] uData, _ucFDat;
+				_file.fData = new unsigned char[inflateDat->len];
+				_file.fSize = inflateDat->len;
+				//std::cout << "fz: " << inflateDat->len << std::endl;
+				for (size_t b = 0; b < inflateDat->len; b++)
+					_file.fData[b] = (unsigned char)inflateDat->bytes[b];
+				delete[] inflateDat->bytes;
+				delete inflateDat;
 				break;
 			}
 
@@ -702,16 +613,27 @@ int pak::ExtractContentsToDisk(std::string pakSrc, std::string resSrc) {
 
 namespace fs = std::filesystem;
 
-int pak::PakFilesInDirectory(std::string targetDir, std::string outputSrc, int compressionType, MZIP_SETTINGS compressionSettings) {
+int pak::PakFilesInDirectory(std::string targetDir, std::string outputSrc, int compressionType, int compressionLevel) {
 	if (targetDir != "" && outputSrc != "") {
 		struct stat sb;
-
+#ifdef SHOW_COMPRESSION_STATUS
+		size_t nFiles = 0;
+		for (const auto& _ : fs::directory_iterator(targetDir))
+			nFiles++;
+#endif
 		PakStructure _pks;
 		int i = 0;
 		for (const auto& _e : fs::directory_iterator(targetDir)) {
 			std::filesystem::path _file_name = _e.path();
 			std::string _f_name = _file_name.string();
 			i++;
+
+#ifdef SHOW_COMPRESSION_STATUS_PAK
+#ifdef SETCONSOLECOLOR
+			SETCONSOLECOLOR(3)
+#endif
+			std::cout << "Packing File [" << i << " / " << nFiles << "]" << std::endl;
+#endif
 
 			const char* _path = (char*)_file_name.c_str();
 
@@ -727,6 +649,11 @@ int pak::PakFilesInDirectory(std::string targetDir, std::string outputSrc, int c
 				_file.seekg(0, std::ios::end);
 				_pc.fSize = _file.tellg();
 				_file.seekg(0, std::ios::beg);
+
+				if (_pc.fSize <= 0) {
+					std::cout << "[Pak Err] File " << i << " has invalid size of " << _pc.fSize << " [fSize > 0], not packing file." << std::endl;
+					continue;
+				}
 				
 				_pc.fData = new unsigned char[_pc.fSize];
 				char* tempBytes = new char[_pc.fSize];
@@ -735,7 +662,7 @@ int pak::PakFilesInDirectory(std::string targetDir, std::string outputSrc, int c
 				delete[] tempBytes;
 
 				_pc.compressType = compressionType;
-				_pc.compressionSettings = compressionSettings;
+				_pc.compressionLevel = compressionLevel;
 				_pc.fName = _file_name.filename().string();
 				_pc.fType = _file_name.extension().string();
 
@@ -925,70 +852,17 @@ PakChunk pak::ExtractFile(std::string src, PakInfo file) {
 
 				//now uncompress even funner!
 				switch (_file.compressType) {
-				case COMPRESSION_HUFFMAN: {
-					HuffmanResult _hcRes = Huffman::Decode(
-						(unsigned char*)_ucFDat,
-						_file.fSize
-					);
-
-					if (_hcRes.bytes != nullptr && _hcRes.len > 0) {
-						_file.fSize = _hcRes.len;
-						_file.fData = new unsigned char[_file.fSize];
-						memcpy(_file.fData, _hcRes.bytes, _file.fSize);
-						delete[] _hcRes.bytes;
-						delete[] _ucFDat;
-					}
-					else {
-						_file.fData = new unsigned char[_file.fSize];
-						memcpy(_file.fData, _ucFDat, _file.fSize);
-						delete[] _ucFDat;
-					}
-
-					break;
-				}
-
-										//TODO add settings
-				case COMPRESSION_LZSS: {
-					lzss_result _lcRes = lzss::decompress(
-						(unsigned char*)_ucFDat,
-						_file.fSize
-					);
-
-					if (_lcRes.bytes != nullptr && _lcRes.len > 0) {
-						_file.fSize = _lcRes.len;
-						_file.fData = new unsigned char[_file.fSize];
-						memcpy(_file.fData, _lcRes.bytes, _file.fSize);
-						delete[] _lcRes.bytes;
-						delete[] _ucFDat;
-					}
-					else {
-						_file.fData = new unsigned char[_file.fSize];
-						memcpy(_file.fData, _ucFDat, _file.fSize);
-						delete[] _ucFDat;
-					}
-
-					break;
-				}
-
-				case COMPRESSION_MZIP: {
-					RawBytes _mcRes = mzip::Decode(
-						(unsigned char*)_ucFDat,
-						_file.fSize
-					);
-
-					if (_mcRes.bytes != nullptr && _mcRes.len > 0) {
-						_file.fSize = _mcRes.len;
-						_file.fData = new unsigned char[_file.fSize];
-						memcpy(_file.fData, _mcRes.bytes, _file.fSize);
-						delete[] _mcRes.bytes;
-						delete[] _ucFDat;
-					}
-					else {
-						_file.fData = new unsigned char[_file.fSize];
-						memcpy(_file.fData, _ucFDat, _file.fSize);
-						delete[] _ucFDat;
-					}
-
+				case 1: {
+					unsigned int* uData = new unsigned int[_file.fSize];
+					for (size_t b = 0; b < _file.fSize; b++)
+						uData[b] = (unsigned int)(unsigned char)_ucFDat[b];
+					ZResult* inflateDat = Zlib::Inflate(uData, _file.fSize);
+					delete[] uData, _ucFDat;
+					_file.fData = new unsigned char[inflateDat->len];
+					for (size_t b = 0; b < inflateDat->len; b++)
+						_file.fData[b] = (unsigned char)inflateDat->bytes[b];
+					delete[] inflateDat->bytes;
+					delete inflateDat;
 					break;
 				}
 

@@ -7,9 +7,7 @@
  * Copyright muffinshades 2024 all rights reserved
  * 
  */
-
-#include "pch.h"
-#include "jparse.h"
+#include "jparse.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -164,21 +162,96 @@ std::string fetchStr(const char* str, int str_len, int idx, int len) {
 	return r;
 }
 
+std::string back_clean(std::string str) { //handles backslah parsing
+	if (str.length() <= 0) return str;
+
+	const char* cStr = str.c_str();
+	const size_t len = str.length();
+	char* rStr = new char[len], *cur = rStr;
+	size_t eLen = 0;
+
+	for (size_t i = 0; i < len; i++) {
+		switch (cStr[i]) {
+			case '\\': {
+				i++;
+
+				if (i >= len)
+					return str;
+
+				switch (cStr[i]) {
+					case 'n': {
+						(*cur++) = '\n';
+						//std::cout << "Got new line!" << std::endl;
+						break;
+					}
+					case 'r': {
+						(*cur++) = '\r';
+						break;
+					}
+					case 't': {
+						(*cur++) = '\t';
+						break;
+					}
+					case 'a': {
+						(*cur++) = '\a';
+						break;
+					}
+					case 'b': {
+						(*cur++) = '\b';
+						break;
+					}
+					case 'f': {
+						(*cur++) = '\f';
+						break;
+					}
+					case 'v': {
+						(*cur++) = '\v';
+						break;
+					}
+					case 'u': {
+						//TODO: add unicode
+						std::cout << "JSON info: Sorry unicode escape isn't supported yet :/" << std::endl;
+						break;
+					}
+					default: {
+						(*cur++) = cStr[i];
+						break;
+					}
+				}
+
+				break;
+			}
+			default: {
+				(*cur++) = cStr[i];
+				break;
+			}
+		}
+
+		eLen++;
+	}
+
+	//fix rstring
+	char* tmp = rStr;
+	rStr = new char[eLen];
+	memcpy(rStr, tmp, eLen);
+	//std::cout << "tStr: " << rStr << std::endl;
+	std::string res = std::string((const char*)rStr).substr(0, eLen);
+	delete[] rStr, tmp;
+	return res;
+}
+
 std::string jp_raw_val(std::string val) {
 	const char* _Vstr = val.c_str();
 
 	if (_Vstr[0] == '"') {
-		std::cout << _Vstr << "   " << _Vstr[0] << "   vstr" << std::endl;
 		if (_Vstr[val.length() - 1] == '"') {
-			return val.substr(1, val.length() - 2);
+			return back_clean(val.substr(1, val.length() - 2));
 		}
-		else {
+		else
 			throw JERR_INVALID_TOK;
-		}
 	}
-	else {
+	else
 		return val;
-	}
 }
 
 void jparse::genTok(const char* rStr, JToken& tok) {
@@ -186,45 +259,34 @@ void jparse::genTok(const char* rStr, JToken& tok) {
 		//parse as JStruct
 		JStruct _r = jparse::parseStr(rStr);
 		tok.body = new JStruct();
-
-		//memcpy(tok.body, &_r, sizeof(JStruct));
 		tok.body->body = _r.body;
 		tok.body->mode = _r.mode;
-
-		//std::cout << "Tok: " << tok.label << "   " << tok.rawValue << std::endl;
 	}
 	else if (rStr[0] == '[') {
 		//parse as JStruct
 		JStruct _r = jparse::parseStr(rStr, false);
 		tok.body = new JStruct();
-
-		//memcpy(tok.body, &_r, sizeof(JStruct));
 		tok.body->body = _r.body;
 		tok.body->mode = _r.mode;
-
-		//std::cout << "STUFF: " << rStr << std::endl;
 	}
-	else {
+	else
 		tok.rawValue = jp_raw_val(rStr);
-
-		//std::cout << "Tok: " << tok.label << "   " << tok.rawValue << std::endl;
-	}
 }
 
+enum JType _gType(std::string str) {
+	std::string nChars = "0123456789.";
+	JType _mode = Int;
+	for (const char _C : str) {
+		if (nChars.find(_C) == std::string::npos)
+			return String;
+		if (_C == '.')
+			_mode = Float;
+	}
+
+	return _mode;
+};
+
 std::string jparse::GenerateString(JStruct json, bool min, std::string tab) {
-	auto _gType = [](std::string str) {
-		std::string nChars = "0123456789.";
-		JType _mode = Int;
-		for (const char _C : str) {
-			if (nChars.find(_C) == std::string::npos)
-				return String;
-			if (_C == '.')
-				_mode = Float;
-		}
-
-		return _mode;
-	};
-
 	std::string rStr = "";
 	switch (json.mode) {
 	case _JMODE_OBJ: {
@@ -267,7 +329,7 @@ std::string jparse::GenerateString(JStruct json, bool min, std::string tab) {
 
 /*
 
-Funciton to remove whitespace and unnecesary characters from string
+Function to remove whitespace and unnecesary characters from string
 
 */
 
@@ -317,26 +379,22 @@ std::string removeJunk(const char* code) {
 		}
 
 		//
-		if (fetchStr(code, len, i, 2) == "/*") {
-			//std::cout << "In comment! " << "   " << inComment << std::endl;
+		if (fetchStr(code, len, i, 2) == "/*" && !inStr) {
 			inComment = true;
 			i++;
 			continue;
 		}
 
-		if (fetchStr(code, len, i, 2) == "//" && !inComment) {
+		if (fetchStr(code, len, i, 2) == "//" && !inComment && !inStr) {
 			i++;
 			inLineComment = true;
 			continue;
 		}
 
-		//std::cout << fetchStr(code, len, i, 2) << std::endl;
-
-		if (fetchStr(code, len, i, 2) == "*/") {
+		if (fetchStr(code, len, i, 2) == "*/" && !inStr) {
 			if (!inComment)
 				return "";
 
-			//std::cout << "End of comment! " << "   " << inComment << std::endl;
 			inComment = false;
 			i++;
 			continue;
@@ -352,23 +410,32 @@ std::string removeJunk(const char* code) {
 		return "";
 	}
 
-	//
-	//std::cout << res << std::endl;
 	return res;
 }
+
+bool _charEscaped(const char* code, int idx) {
+	int bCount = 0, cIdx = idx - 1, len = strlen(code);
+
+	while (cIdx >= 0 && code[cIdx] == '\\') {
+		bCount++;
+		cIdx--;
+	}
+
+	return (bCount % 2) == 0 ? false : true;
+};
 
 JStruct jparse::parseStr(const char* jData, bool _clean) {
 	char* jsonData;
 	if (_clean) {
 		std::string rStr = removeJunk(jData);
+		//std::cout << "Parsing: " << rStr << std::endl;
 		const char* c_str = rStr.c_str();
 		jsonData = new char[strlen(c_str)];
 		memcpy(jsonData, c_str, strlen(c_str));
 	}
-	else {
+	else
 		jsonData = (char*)jData;
-	}
-	//std::cout << "pStr: " << jsonData << std::endl;
+	
 	JStruct rStruct;
 
 	int mode; //0 obj, 1 array
@@ -377,36 +444,34 @@ JStruct jparse::parseStr(const char* jData, bool _clean) {
 	char bChar = jsonData[0];
 
 	switch (bChar) {
-	case '[': {
-		mode = _JMODE_ARR;
-		//std::cout << "ARR MODE" << std::endl;
-		break;
+		case '[': {
+			mode = _JMODE_ARR;
+			break;
+		}
+		case '{': {
+			mode = _JMODE_OBJ;
+			break;
+		}
+		default: {
+			return JStruct();
+		}
 	}
-	case '{': {
-		mode = _JMODE_OBJ;
-		break;
-	}
-	default: {
-		return JStruct();
-	}
-	}
-
-	//std::cout << "MODE:   " << bChar << "   " << mode << std::endl;
 
 	//split
-	int cChar = 1, len = strlen(jsonData), indentsC = 0, indentsA = 0;
+	int cChar = 1, indentsC = 0, indentsA = 0;
+	const size_t len = strlen(jsonData);
 
 	std::vector<std::string> chunks;
 
 	std::string charCollect;
 
-	bool cBreak = false, fBreak = false;
+	bool cBreak = false, fBreak = false, inStr = false;
 
-	while (cChar < len) {
+	do {
 
 		switch (jsonData[cChar]) {
 		case ',': {
-			if (indentsC == 0 && indentsA == 0) {
+			if (indentsC == 0 && indentsA == 0 && !inStr) {
 				cBreak = true;
 
 				chunks.push_back(charCollect);
@@ -415,21 +480,34 @@ JStruct jparse::parseStr(const char* jData, bool _clean) {
 			break;
 		}
 		case '{': {
+			if (inStr)
+				break;
 			indentsC++;
 			break;
 		}
 		case '[': {
+			if (inStr)
+				break;
 			indentsA++;
 			break;
 		}
 		case '}': {
+			if (inStr)
+				break;
 			indentsC--;
 			if (indentsC < 0) fBreak = true;
 			break;
 		}
 		case ']': {
+			if (inStr)
+				break;
 			indentsA--;
 			if (indentsA < 0) fBreak = true;
+			break;
+		}
+		case '"': {
+			if (!_charEscaped(jsonData, cChar))
+				inStr = !inStr;
 			break;
 		}
 		}
@@ -440,9 +518,7 @@ JStruct jparse::parseStr(const char* jData, bool _clean) {
 			charCollect += jsonData[cChar];
 		else
 			cBreak = false;
-
-		cChar++;
-	}
+	} while (++cChar < len);
 
 	chunks.push_back(charCollect);
 
@@ -450,28 +526,46 @@ JStruct jparse::parseStr(const char* jData, bool _clean) {
 	auto _split = [](const char* str, char delim) {
 		std::vector<std::string> res;
 		std::string current;
+		bool inStr = false;
 		int rb, ab;
+		const size_t len = strlen(str);
 		rb = ab = 0;
-		for (int i = 0; i < strlen(str); i++) {
+		for (int i = 0; i < len; i++) {
+#ifdef MSFL_JSON_DEBUG
+			if (i % 5000 == 0)
+				std::cout << "split: " << i << " / " << len << std::endl;
+#endif
 			switch (str[i]) {
 			case '{': {
+				if (inStr)
+					break;
 				rb++;
 				break;
 			}
 			case '}': {
+				if (inStr)
+					break;
 				rb--;
 				break;
 			}
 			case '[': {
+				if (inStr)
+					break;
 				ab++;
 				break;
 			}
 			case ']': {
+				if (inStr)
+					break;
 				ab--;
 				break;
 			}
+			case '"': {
+				if (!_charEscaped(str, i))
+					inStr = !inStr;
 			}
-			if (str[i] == delim && rb <= 0 && ab <= 0) {
+			}
+			if (str[i] == delim && rb <= 0 && ab <= 0 && !inStr) {
 				res.push_back(current);
 				current = "";
 				continue;
@@ -485,25 +579,33 @@ JStruct jparse::parseStr(const char* jData, bool _clean) {
 	};
 
 	if (mode == _JMODE_OBJ) {
+		//std::cout << "GOT: " << chunks.size() << " chunks" << std::endl;
 		for (std::string c : chunks) {
-			//std::cout << "P Chunk " << c << std::endl;
 			std::vector<std::string> lSplit = _split(c.c_str(), ':');
-			//for (std::string s : lSplit)
-				//std::cout << s << " t" << std::endl;
+
+			//std::cout << "Spl Sz: " << lSplit.size() << " " << c << std::endl;;
+
 			if (lSplit.size() > 2) return JStruct();
+
+			//std::cout << "parsing chunk: " << c << std::endl;
 
 			JToken tok;
 
 			const char* lStr = lSplit[0].c_str();
+			const size_t zLen = lSplit[0].length();
 			//label str check
-			if (lStr[0] != '"' || lStr[lSplit[0].length() - 1] != '"') return JStruct();
+			if (lStr[0] != '"' || lStr[zLen - 1] != '"') return JStruct();
 
-			tok.label = lSplit[0].substr(1, lSplit[0].length() - 2); //left
+			//std::cout << "Test backslash thing: " << back_clean("Test \\n Slash \\\"") << std::endl;
+			//std::cout << "--------------------------" << std::endl;
+
+			tok.label = lSplit[0].substr(1, zLen - 2); //left
 
 			//value
 			const char* rStr = lSplit[1].c_str();
-			//std::cout << "Right Parse: " << rStr << std::endl;
 			genTok(rStr, tok);
+
+			//std::cout << "Token: " << tok.label << " " << tok.rawValue << std::endl;
 
 			rStruct.body.push_back(tok);
 		}
@@ -513,7 +615,7 @@ JStruct jparse::parseStr(const char* jData, bool _clean) {
 		for (std::string c : chunks) {
 			JToken _tok;
 			genTok(c.c_str(), _tok);
-			rStruct.body.push_back(_tok);
+ 			rStruct.body.push_back(_tok);
 		}
 	}
 

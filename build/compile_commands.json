@@ -1,0 +1,110 @@
+[
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/BinUtility.cpp.o -c /Users/jamesweigand/Documents/msfl/src/BinUtility.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/BinUtility.cpp",
+  "output": "CMakeFiles/msfl.dir/src/BinUtility.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/ByteStream.cpp.o -c /Users/jamesweigand/Documents/msfl/src/ByteStream.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/ByteStream.cpp",
+  "output": "CMakeFiles/msfl.dir/src/ByteStream.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/FileWriter.cpp.o -c /Users/jamesweigand/Documents/msfl/src/FileWriter.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/FileWriter.cpp",
+  "output": "CMakeFiles/msfl.dir/src/FileWriter.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/RawBytes.cpp.o -c /Users/jamesweigand/Documents/msfl/src/RawBytes.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/RawBytes.cpp",
+  "output": "CMakeFiles/msfl.dir/src/RawBytes.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/asset.cpp.o -c /Users/jamesweigand/Documents/msfl/src/asset.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/asset.cpp",
+  "output": "CMakeFiles/msfl.dir/src/asset.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/balloon.cpp.o -c /Users/jamesweigand/Documents/msfl/src/balloon.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/balloon.cpp",
+  "output": "CMakeFiles/msfl.dir/src/balloon.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/bitmap.cpp.o -c /Users/jamesweigand/Documents/msfl/src/bitmap.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/bitmap.cpp",
+  "output": "CMakeFiles/msfl.dir/src/bitmap.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/bitmapRender.cpp.o -c /Users/jamesweigand/Documents/msfl/src/bitmapRender.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/bitmapRender.cpp",
+  "output": "CMakeFiles/msfl.dir/src/bitmapRender.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/cfgParse.cpp.o -c /Users/jamesweigand/Documents/msfl/src/cfgParse.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/cfgParse.cpp",
+  "output": "CMakeFiles/msfl.dir/src/cfgParse.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/jparse.cpp.o -c /Users/jamesweigand/Documents/msfl/src/jparse.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/jparse.cpp",
+  "output": "CMakeFiles/msfl.dir/src/jparse.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/main.cpp.o -c /Users/jamesweigand/Documents/msfl/src/main.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/main.cpp",
+  "output": "CMakeFiles/msfl.dir/src/main.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/pak.cpp.o -c /Users/jamesweigand/Documents/msfl/src/pak.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/pak.cpp",
+  "output": "CMakeFiles/msfl.dir/src/pak.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/png.cpp.o -c /Users/jamesweigand/Documents/msfl/src/png.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/png.cpp",
+  "output": "CMakeFiles/msfl.dir/src/png.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/ttf.cpp.o -c /Users/jamesweigand/Documents/msfl/src/ttf.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/ttf.cpp",
+  "output": "CMakeFiles/msfl.dir/src/ttf.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/ttfRender.cpp.o -c /Users/jamesweigand/Documents/msfl/src/ttfRender.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/ttfRender.cpp",
+  "output": "CMakeFiles/msfl.dir/src/ttfRender.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/xml.cpp.o -c /Users/jamesweigand/Documents/msfl/src/xml.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/xml.cpp",
+  "output": "CMakeFiles/msfl.dir/src/xml.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/yaml.cpp.o -c /Users/jamesweigand/Documents/msfl/src/yaml.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/yaml.cpp",
+  "output": "CMakeFiles/msfl.dir/src/yaml.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/zip.cpp.o -c /Users/jamesweigand/Documents/msfl/src/zip.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/zip.cpp",
+  "output": "CMakeFiles/msfl.dir/src/zip.cpp.o"
+}
+]

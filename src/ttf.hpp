@@ -1,7 +1,7 @@
+#pragma once
 #include <iostream>
 #include "FileWriter.h"
 #include "ByteStream.hpp"
-#include "ttfRender.hpp"
 
 typedef long long ttfLongDateTime;
 
@@ -96,4 +96,5 @@ class ttfParse {
 public:
     static ttfFile ParseTTFFile(std::string src);
     static ttfFile ParseBin(byte *dat, size_t sz);
+    static Glyph ReadTTFGlyph(std::string src, u32 id);
 };

@@ -10,7 +10,7 @@ int write_bmp_header(Bitmap *bmp, ByteStream *stream) {
     stream->writeUInt16(bmp->header.colorPlanes);
     stream->writeUInt16(bmp->header.bitsPerPixel);
     stream->writeUInt32(bmp->header.compressionMode);
-    stream->writeUInt32(bmp->header.fSz);
+    stream->writeUInt32(0);
     stream->writeInt32(bmp->header.hResolution);
     stream->writeInt32(bmp->header.vResolution);
     stream->writeUInt32(bmp->header.nPalleteColors);

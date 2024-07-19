@@ -875,5 +875,4 @@ CMakeFiles/msfl.dir/src/ttf.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/c++/v1/__memory/temp_value.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/c++/v1/__split_buffer \
   /Users/jamesweigand/Documents/msfl/src/ByteStream.hpp \
-  /Users/jamesweigand/Documents/msfl/src/msutil.hpp \
-  /Users/jamesweigand/Documents/msfl/src/ttfRender.hpp
+  /Users/jamesweigand/Documents/msfl/src/msutil.hpp

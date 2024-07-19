@@ -1,5 +1,6 @@
 #include "ttfRender.hpp"
 #include "msutil.hpp"
+#include "bitmapRender.hpp"
 #include <vector>
 
 /**
@@ -56,4 +57,48 @@ Point bezier(std::vector<Point> points, float t) {
     Point r = (*tg)[0];
     delete tg, i;
     return r;
+};
+
+i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
+    i32 mapW = tGlyph.xMax - tGlyph.xMin,
+          mapH = tGlyph.yMax - tGlyph.yMin;
+
+    if (scale <= 0.0f)
+        return 1;
+
+    mapW *= scale;
+    mapH *= scale;
+
+    bmp->header.w = mapW;
+    bmp->header.h = mapH;
+    bmp->data = new byte[mapW * mapH * sizeof(u32)];
+    bmp->header.fSz = mapW * mapH * sizeof(u32);
+
+    ZeroMem(bmp->data, bmp->header.fSz);
+
+    //std::cout << bmp->header.w << " " << bmp->header.h << std::endl;
+ 
+    //render the glyph
+    //gonna render white for now
+
+    size_t onCount = 0, offCount = 0;
+
+    const float nSteps = 150.0f * scale, invStep = 1.0f / nSteps;
+
+    BitmapGraphics g(bmp);
+
+    bool contourStart = false;
+    size_t currentContour = 0;
+
+    for (size_t p = 1; p < tGlyph.nPoints; p++) {
+        for (float v = 0.0f; v < 1.0f; v += invStep) {
+            Point pos = pLerp({tGlyph.points[p].x * scale, tGlyph.points[p].y * scale}, {tGlyph.points[p - 1].x * scale, tGlyph.points[p - 1].y * scale}, v);
+            g.SetColor(255,255,255,255);
+            g.DrawPixel((u32)pos.x, (u32)pos.y);
+
+            //std::cout << "Pos: " << pos.x << " " << pos.y << std::endl;
+        }
+    }
+    
+    return 0;
 }

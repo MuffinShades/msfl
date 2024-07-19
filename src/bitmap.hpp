@@ -19,6 +19,7 @@ class Bitmap {
 public:
     BitmapHeader header;
     byte *data;
+    static Bitmap CreateBitmap(i32 w, i32 h);
 };
 
 class BitmapParse {

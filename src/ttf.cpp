@@ -478,5 +478,29 @@ ttfFile ttfParse::ParseBin(byte *dat, size_t sz) {
         std::cout << "Glyph Point: " << tGlyph.points[i].x << ", " << tGlyph.points[i].y << std::endl;
     }
 
+    fStream.free();
+
     return f;
+}
+
+
+Glyph ttfParse::ReadTTFGlyph(std::string src, u32 id) {
+    Glyph tGlyph;
+    arr_container<byte> fBytes = FileWriter::ReadBytesFromBinFile(src);
+
+    if (fBytes.dat == nullptr || fBytes.sz <= 0)
+        return tGlyph;
+
+    ttfFile f;
+    ttfStream fStream = ttfStream(fBytes.dat, fBytes.sz);
+
+    read_offset_tables(&fStream, &f);
+
+    u32 offset = getGlyphOffset(&fStream, &f, id);
+    tGlyph = read_glyph(&fStream, &f, offset);
+
+    delete[] fBytes.dat;
+    fStream.free();
+
+    return tGlyph;
 }

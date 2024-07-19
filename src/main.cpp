@@ -5,6 +5,7 @@
 #include "jparse.hpp"
 #include "asset.hpp"
 #include "ttf.hpp"
+#include "ttfRender.hpp"
 #include "bitmap.hpp"
 #include "bitmapRender.hpp"
 
@@ -139,11 +140,24 @@ int main() {
 
 	BitmapGraphics bmpG = BitmapGraphics(&testBmp);
 
-	bmpG.SetColor(255, 0, 0, 255);
+	bmpG.SetColor(255, 0, 255, 255);
 	bmpG.DrawPixel(1,1);
+
+	bmpG.SetColor(255, 255, 255, 255);
+	bmpG.DrawPixel(2,2);
 
 	BitmapParse::WriteToFile("/Users/jamesweigand/Desktop/testingFolder/testBmpOut.bmp", &testBmp);
 	delete[] testBmp.data;
+
+	Bitmap ttfBitmap;
+
+	Glyph tGlyph = ttfParse::ReadTTFGlyph("/Users/jamesweigand/Desktop/testingFolder/Arial.ttf", 37u);
+	
+	ttfRender::RenderGlyphToBitmap(tGlyph, &ttfBitmap, 0.1f);
+
+	i32 errCode = BitmapParse::WriteToFile("/Users/jamesweigand/Desktop/testingFolder/testGlyph.bmp", &ttfBitmap);
+
+	std::cout << "BMP ERROR: " << errCode << std::endl;
 
 	return 0;
 } 

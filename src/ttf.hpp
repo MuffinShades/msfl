@@ -3,6 +3,21 @@
 #include "FileWriter.h"
 #include "ByteStream.hpp"
 
+//some flagg stuff for getting a glyph
+enum PointFlag {
+    PointFlag_onCurve,
+    PointFlag_xSz,
+    PointFlag_ySz,
+    PointFlag_repeat,
+    PointFlag_xMode,
+    PointFlag_yMode
+};
+
+#define GetFlagValue(f, p) ((f) & (1 << (p))) //macro this function cause it's so small
+static inline i32 ModifyFlagValue(i32 f, i32 p, i32 v) {
+    return (f & (0xff ^ (1 << p))) | ((v & 1) << p); //weird ass bit manipulation thingy
+}
+
 typedef long long ttfLongDateTime;
 
 enum iTable {

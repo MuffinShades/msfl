@@ -266,19 +266,6 @@ u32 getUnicodeOffset(ttfStream *stream, ttfFile* f, u32 tChar) {
     
 }
 
-
-//some flagg stuff for getting a glyph
-enum PointFlag {
-    PointFlag_onCurve,
-    PointFlag_xSz,
-    PointFlag_ySz,
-    PointFlag_repeat,
-    PointFlag_xMode,
-    PointFlag_yMode
-};
-
-#define GetFlagValue(f, p) ((f) & (1 << (p))) //macro this function cause it's so small
-
 /**
  * 
  * read_glyph

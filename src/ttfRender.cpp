@@ -109,13 +109,25 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
         Point p = tGlyph.points[i];
 
         if (
+            !GetFlagValue(pFlag, PointFlag_onCurve) && 
+            i < tGlyph.nPoints - 1 && 
+            !GetFlagValue(tGlyph.flags[i+1], PointFlag_onCurve)
+        ) {
+            //add implied point
+            std::cout << "Adding implied point..." << std::endl;
+            fPoints.push_back(pLerp(p, tGlyph.points[i+1], 0.5f));
+            fFlags.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, 1));
+        }
+
+        if (
             GetFlagValue(pFlag, PointFlag_onCurve) && 
             i < tGlyph.nPoints - 1 && 
             GetFlagValue(tGlyph.flags[i+1], PointFlag_onCurve)
         ) {
             //add implied point
+            std::cout << "Adding implied point..." << std::endl;
             fPoints.push_back(pLerp(p, tGlyph.points[i+1], 0.5f));
-            fFlags.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, 1));
+            fFlags.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, 0));
         }
     }
 
@@ -145,9 +157,7 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
             //then just draw a straight line
             if (offCurve == 0) {
                 //TODO: change this to a line renderer
-                for (float t = 0.0f; t < 1.0f; t += invStep) {
-
-                }
+                
 
                 offCurve = (onCurve = 0);
                 continue;
@@ -181,7 +191,7 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
                         );
 
                         g.SetColor(255, 0, 255, 255);
-                        g.DrawPixel(np.x, np.y);
+                        //g.DrawPixel(np.x, np.y);
                     }
                     break;
                 }

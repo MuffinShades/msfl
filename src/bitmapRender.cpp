@@ -36,8 +36,8 @@ void BitmapGraphics::DrawPixel(u32 x, u32 y) {
     }
 
     const size_t byPP = bpp >> 3;
-    size_t p = (x  + (y * this->bmp->header.w)) * byPP;
-    std::cout << p << std::endl;
+    size_t p = (x + (y * this->bmp->header.w)) * byPP;
+    //std::cout << p << std::endl;
 
     _bmpColor nColor = setColorResolution(this->tColor, bpp);
 

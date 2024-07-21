@@ -66,6 +66,27 @@ Point ScalePoint(Point p, float s) {
     };
 }
 
+void DrawPoint(BitmapGraphics *g, float x, float y) {
+    float xf = floor(x), xc = ceil(x),
+          yf = floor(y), yc = ceil(y);
+
+    float cIx = xc - x, fIx = x - xf,
+          cIy = yc - y, fIy = y - yf;
+
+    float i = ((cIx + fIx) / 2.0f + (cIy + fIy) / 2.0f) / 2.0f;
+
+    i *= 255.0f;
+
+    fIx *= 255.0f;
+    fIy *= 255.0f;
+
+    g->SetColor(fIx,fIx,fIx, 255);
+    g->DrawPixel(x-1, y);
+
+    g->SetColor(cIx,cIx,cIx, 255);
+    g->DrawPixel(x, y);
+}
+
 i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
     i32 mapW = tGlyph.xMax - tGlyph.xMin,
           mapH = tGlyph.yMax - tGlyph.yMin;
@@ -75,6 +96,9 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
 
     mapW *= scale;
     mapH *= scale;
+
+    mapW++;
+    mapH++;
 
     bmp->header.w = mapW;
     bmp->header.h = mapH;
@@ -107,6 +131,11 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
 
         i32 pFlag = tGlyph.flags[i];
         Point p = tGlyph.points[i];
+
+        if (i == tGlyph.contourEnds[currentContour]) {
+            currentContour++;
+            continue;
+        }
 
         if (
             !GetFlagValue(pFlag, PointFlag_onCurve) && 
@@ -147,7 +176,7 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
 
         if ((bool)GetFlagValue(pFlag, PointFlag_onCurve)) {
             g.SetColor(255,0,0,255);
-            g.DrawPixel(p.x * scale, p.y * scale);
+            g.DrawPixel(p.x * scale - tGlyph.xMin * scale, p.y * scale - tGlyph.yMin * scale);
 
             if (onCurve == 0 && offCurve == 0) {
                 onCurve++;
@@ -158,43 +187,23 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
             if (offCurve == 0) {
                 //TODO: change this to a line renderer
                 
-
+                std::cout << "DRAWING STRAIGHT LINE" << std::endl;
                 offCurve = (onCurve = 0);
                 continue;
             }
 
             //else draw le curve
-            switch (offCurve) {
-                case 1: {
-                    std::cout << "DRAWING CURVE 3" << std::endl;
-                    for (float t = 0.0f; t < 1.0f; t += invStep) {
-                        Point np = bezier3(
-                            ScalePoint(fPoints[i - 2], scale), 
-                            ScalePoint(fPoints[i - 1], scale), 
-                            ScalePoint(p, scale), 
-                            t
-                        );
+            for (float t = 0.0f; t < 1.0f; t += invStep) {
+                Point np = bezier3(
+                    ScalePoint(fPoints[i - 2], scale), 
+                    ScalePoint(fPoints[i - 1], scale), 
+                    ScalePoint(p, scale), 
+                    t
+                );
 
-                        g.SetColor(255, 255, 255, 255);
-                        g.DrawPixel(np.x, np.y);
-                    }
-                    break;
-                }
-                case 2: {
-                    for (float t = 0.0f; t < 1.0f; t += invStep) {
-                        Point np = bezier4(
-                            ScalePoint(fPoints[i - 3], scale),
-                            ScalePoint(fPoints[i - 2], scale), 
-                            ScalePoint(fPoints[i - 1], scale), 
-                            ScalePoint(p, scale), 
-                            t
-                        );
-
-                        g.SetColor(255, 0, 255, 255);
-                        //g.DrawPixel(np.x, np.y);
-                    }
-                    break;
-                }
+                g.SetColor((np.x / (float)mapW) * 255.0f, (np.y / (float)mapH) * 255.0f, 255, 255);
+                //DrawPoint(&g, np.x - tGlyph.xMin * scale, np.y - tGlyph.yMin * scale);
+                g.DrawPixel(np.x - tGlyph.xMin * scale, np.y - tGlyph.yMin * scale);
             }
 
             offCurve = onCurve = 0;
@@ -203,8 +212,6 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
             g.SetColor(0,255,0,255);
             g.DrawPixel(p.x * scale, p.y * scale);
         }
-
-
     }
     
     return 0;

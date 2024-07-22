@@ -97,8 +97,8 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
     mapW *= scale;
     mapH *= scale;
 
-    mapW++;
-    mapH++;
+    mapW+=50;
+    mapH+=50;
 
     bmp->header.w = mapW;
     bmp->header.h = mapH;
@@ -106,8 +106,6 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
     bmp->header.fSz = mapW * mapH * sizeof(u32);
 
     ZeroMem(bmp->data, bmp->header.fSz);
-
-    //std::cout << bmp->header.w << " " << bmp->header.h << std::endl;
  
     //render the glyph
     //gonna render white for now
@@ -132,50 +130,45 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
         i32 pFlag = tGlyph.flags[i];
         Point p = tGlyph.points[i];
 
-        if (i == tGlyph.contourEnds[currentContour]) {
+        if (i == tGlyph.contourEnds[currentContour] || i >= tGlyph.nPoints - 1) {
+            if (currentContour > 0) {
+                size_t cPos = tGlyph.contourEnds[currentContour-1]+1;
+                fPoints.push_back(tGlyph.points[cPos]);
+                assert(cPos < tGlyph.nPoints);
+                fFlags.push_back(tGlyph.flags[cPos]);
+            }
+            else {
+                fPoints.push_back(tGlyph.points[0]);
+                fFlags.push_back(tGlyph.flags[0]);
+            }
             currentContour++;
             continue;
         }
 
-        if (
-            !GetFlagValue(pFlag, PointFlag_onCurve) && 
-            i < tGlyph.nPoints - 1 && 
-            !GetFlagValue(tGlyph.flags[i+1], PointFlag_onCurve)
-        ) {
-            //add implied point
-            std::cout << "Adding implied point..." << std::endl;
-            fPoints.push_back(pLerp(p, tGlyph.points[i+1], 0.5f));
-            fFlags.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, 1));
-        }
+        u32 oCurve;
 
         if (
-            GetFlagValue(pFlag, PointFlag_onCurve) && 
             i < tGlyph.nPoints - 1 && 
-            GetFlagValue(tGlyph.flags[i+1], PointFlag_onCurve)
+            (oCurve = GetFlagValue(pFlag, PointFlag_onCurve)) == GetFlagValue(tGlyph.flags[i+1], PointFlag_onCurve)
         ) {
             //add implied point
-            std::cout << "Adding implied point..." << std::endl;
             fPoints.push_back(pLerp(p, tGlyph.points[i+1], 0.5f));
-            fFlags.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, 0));
+            fFlags.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, !oCurve));
         }
     }
 
+    srand(time(NULL));
+
     for (size_t i = 0; i < fPoints.size(); i++) {
-        /*for (float v = 0.0f; v < 1.0f; v += invStep) {
-            Point pos = pLerp({tGlyph.points[p].x * scale, tGlyph.points[p].y * scale}, {tGlyph.points[p - 1].x * scale, tGlyph.points[p - 1].y * scale}, v);
-            g.SetColor(255,255,255,255);
-            g.DrawPixel((u32)pos.x, (u32)pos.y);
-
-            //std::cout << "Pos: " << pos.x << " " << pos.y << std::endl;
-        }*/
-
         std::cout << offCurve << " " << onCurve << std::endl;
 
         i32 pFlag = fFlags[i];
         Point p = fPoints[i];
 
         if ((bool)GetFlagValue(pFlag, PointFlag_onCurve)) {
-            g.SetColor(255,0,0,255);
+            g.SetColor(255,255,255,255);
+            if (i == 0)
+                g.SetColor(255,255,0,255);
             g.DrawPixel(p.x * scale - tGlyph.xMin * scale, p.y * scale - tGlyph.yMin * scale);
 
             if (onCurve == 0 && offCurve == 0) {
@@ -192,6 +185,8 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
                 continue;
             }
 
+            g.SetColor(rand()%255,rand()%255,rand()%255, 255.0f);
+
             //else draw le curve
             for (float t = 0.0f; t < 1.0f; t += invStep) {
                 Point np = bezier3(
@@ -201,15 +196,16 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
                     t
                 );
 
-                g.SetColor((np.x / (float)mapW) * 255.0f, (np.y / (float)mapH) * 255.0f, 255, 255);
+                //g.SetColor((np.x / (float)mapW) * 255.0f, (np.y / (float)mapH) * 255.0f, 255, 255);
                 //DrawPoint(&g, np.x - tGlyph.xMin * scale, np.y - tGlyph.yMin * scale);
+                //g.SetColor(128.0f, 128.0f, 128.0f, 255.0f);
                 g.DrawPixel(np.x - tGlyph.xMin * scale, np.y - tGlyph.yMin * scale);
             }
 
             offCurve = onCurve = 0;
         } else {
             offCurve++;
-            g.SetColor(0,255,0,255);
+            g.SetColor((i / (float) fPoints.size()) * 255.0f,0.0f,255.0f - ((i / (float) fPoints.size()) * 255.0f),255);
             g.DrawPixel(p.x * scale, p.y * scale);
         }
     }

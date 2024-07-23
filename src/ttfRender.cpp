@@ -97,8 +97,8 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
     mapW *= scale;
     mapH *= scale;
 
-    //mapW+=50;
-    //mapH+=50;
+    mapW ++;
+    mapH ++;
 
     bmp->header.w = mapW;
     bmp->header.h = mapH;

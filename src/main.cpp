@@ -151,7 +151,7 @@ int main() {
 
 	Bitmap ttfBitmap;
 
-	Glyph tGlyph = ttfParse::ReadTTFGlyph("/Users/jamesweigand/Desktop/testingFolder/Arial.ttf", 83u);
+	Glyph tGlyph = ttfParse::ReadTTFGlyph("/Users/jamesweigand/Desktop/testingFolder/Arial.ttf", 69u);
 	
 	ttfRender::RenderGlyphToBitmap(tGlyph, &ttfBitmap, 0.1f);
 

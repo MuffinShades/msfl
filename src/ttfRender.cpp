@@ -89,7 +89,7 @@ void DrawPoint(BitmapGraphics *g, float x, float y) {
 
 i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
     i32 mapW = tGlyph.xMax - tGlyph.xMin,
-          mapH = tGlyph.yMax - tGlyph.yMin;
+        mapH = tGlyph.yMax - tGlyph.yMin;
 
     if (scale <= 0.0f)
         return 1;
@@ -131,17 +131,27 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
         Point p = tGlyph.points[i];
 
         if (i == tGlyph.contourEnds[currentContour] || i >= tGlyph.nPoints - 1) {
-            if (currentContour > 0) {
-                size_t cPos = tGlyph.contourEnds[currentContour-1]+1;
-                fPoints.push_back(tGlyph.points[cPos]);
-                assert(cPos < tGlyph.nPoints);
-                fFlags.push_back(tGlyph.flags[cPos]);
+            size_t cPos = currentContour > 0 ? tGlyph.contourEnds[currentContour-1]+1 : 0;
+            assert(cPos < tGlyph.nPoints);
+
+            //check for an implied point
+            i32 flg = tGlyph.flags[cPos];
+            bool oc = GetFlagValue(flg, PointFlag_onCurve);
+
+            //add implied point in-between if needed
+            if (oc == GetFlagValue(pFlag, PointFlag_onCurve)) {
+                fPoints.push_back(pLerp(p, tGlyph.points[cPos], 0.5f));
+                fFlags.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, !oc));
             }
-            else {
-                fPoints.push_back(tGlyph.points[0]);
-                fFlags.push_back(tGlyph.flags[0]);
-            }
+
+            //add point
+            fPoints.push_back(tGlyph.points[cPos]);
+            fFlags.push_back(flg);
+            
             currentContour++;
+#ifdef MSFL_TTFRENDER_DEBUG
+            std::cout << "Finished Contour: " << currentContour << " / " << tGlyph.nContours << std::endl;
+#endif
             continue;
         }
 
@@ -157,35 +167,32 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
         }
     }
 
+#ifdef MSFL_TTFRENDER_DEBUG
     srand(time(NULL));
+#endif
 
     for (size_t i = 0; i < fPoints.size(); i++) {
-        std::cout << offCurve << " " << onCurve << std::endl;
-
         i32 pFlag = fFlags[i];
         Point p = fPoints[i];
 
         if ((bool)GetFlagValue(pFlag, PointFlag_onCurve)) {
+#ifdef MSFL_TTFRENDER_DEBUG
             g.SetColor(255,255,255,255);
             if (i == 0)
                 g.SetColor(255,255,0,255);
             g.DrawPixel(p.x * scale - tGlyph.xMin * scale, p.y * scale - tGlyph.yMin * scale);
+#endif
 
             if (onCurve == 0 && offCurve == 0) {
                 onCurve++;
                 continue;
             }
 
-            //then just draw a straight line
-            if (offCurve == 0) {
-                //TODO: change this to a line renderer
-                
-                std::cout << "DRAWING STRAIGHT LINE" << std::endl;
-                offCurve = (onCurve = 0);
+            //there shouldnt be a stright line so...
+            if (offCurve == 0) 
                 continue;
-            }
 
-            g.SetColor(rand()%255,rand()%255,rand()%255, 255.0f);
+            g.SetColor(255.0f, 255.0f, 255.0f, 255.0f);
 
             //else draw le curve
             for (float t = 0.0f; t < 1.0f; t += invStep) {
@@ -205,8 +212,10 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
             offCurve = onCurve = 0;
         } else {
             offCurve++;
+#ifdef MSFL_TTFRENDER_DEBUG
             g.SetColor((i / (float) fPoints.size()) * 255.0f,0.0f,255.0f - ((i / (float) fPoints.size()) * 255.0f),255);
             g.DrawPixel(p.x * scale, p.y * scale);
+#endif
         }
     }
     

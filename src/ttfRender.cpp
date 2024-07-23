@@ -96,6 +96,15 @@ struct f_roots {
     i32 nRoots = 0;
 };
 
+/**
+ *
+ * getRoots
+ * 
+ * returns the number of roots a
+ * quadratic function has and their
+ * values
+ * 
+ */
 f_roots getRoots(float a, float b, float c) {
     if (EPSILIZE(a) == 0.0f) 
         return {
@@ -119,6 +128,18 @@ f_roots getRoots(float a, float b, float c) {
         };
 }
 
+/**
+ * 
+ * intersectsCurve
+ * 
+ * function to determine if a given point, e
+ * intersects a 3-points bezier curve denoted
+ * by the points p0, p1, and p2
+ * 
+ * Returns the # of interesctions that were made
+ * 0, 1, or 2
+ * 
+ */
 i32 intersectsCurve(Point p0, Point p1, Point p2, Point e) {
     p0.y -= e.y;
     p1.y -= e.y;
@@ -138,6 +159,84 @@ i32 intersectsCurve(Point p0, Point p1, Point p2, Point e) {
     return nRoots;
 }
 
+struct gPData {
+    std::vector<Point> p;
+    std::vector<i32> f;
+};
+
+/**
+ * 
+ * cleanGlyphPoints
+ * 
+ * takes the raw points from a Glyph and
+ * adds the implied points and contour ends
+ * cleaning up the glyph making it much easier
+ * to do the rendering.
+ * 
+ */
+gPData cleanGlyphPoints(Glyph tGlyph) {
+    gPData res;
+
+    size_t currentContour = 0;
+
+    //first add implied points
+    for (size_t i = 0; i < tGlyph.nPoints; i++) {
+        res.p.push_back(tGlyph.points[i]);
+        res.f.push_back(tGlyph.flags[i]);
+
+        i32 pFlag = tGlyph.flags[i];
+        Point p = tGlyph.points[i];
+
+        if (i == tGlyph.contourEnds[currentContour] || i >= tGlyph.nPoints - 1) {
+            size_t cPos = currentContour > 0 ? tGlyph.contourEnds[currentContour-1]+1 : 0;
+            assert(cPos < tGlyph.nPoints);
+
+            //check for an implied point
+            i32 flg = tGlyph.flags[cPos];
+            bool oc = GetFlagValue(flg, PointFlag_onCurve);
+
+            //add implied point in-between if needed
+            if (oc == GetFlagValue(pFlag, PointFlag_onCurve)) {
+                res.p.push_back(pLerp(p, tGlyph.points[cPos], 0.5f));
+                res.f.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, !oc));
+            }
+
+            //add point
+            res.p.push_back(tGlyph.points[cPos]);
+            res.f.push_back(flg);
+            
+            currentContour++;
+#ifdef MSFL_TTFRENDER_DEBUG
+            std::cout << "Finished Contour: " << currentContour << " / " << tGlyph.nContours << std::endl;
+#endif
+            continue;
+        }
+
+        u32 oCurve;
+
+        if (
+            i < tGlyph.nPoints - 1 && 
+            (oCurve = GetFlagValue(pFlag, PointFlag_onCurve)) == GetFlagValue(tGlyph.flags[i+1], PointFlag_onCurve)
+        ) {
+            //add implied point
+            res.p.push_back(pLerp(p, tGlyph.points[i+1], 0.5f));
+            res.f.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, !oCurve));
+        }
+    }
+
+    return res;
+}
+
+/**
+ * 
+ * ttfRender::RenderGlyphToBitmap
+ * 
+ * renders a given ttfGlyph to a bitmap with
+ * the r, g, b, a values being multipliers to
+ * whatever given color you want to render the
+ * text as
+ * 
+ */
 i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
     i32 mapW = tGlyph.xMax - tGlyph.xMin,
         mapH = tGlyph.yMax - tGlyph.yMin;
@@ -167,56 +266,9 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
 
     BitmapGraphics g(bmp);
 
-    bool contourStart = false;
-    size_t currentContour = 0;
-
-    std::vector<Point> fPoints;
-    std::vector<i32> fFlags;
-
-    //first add implied points
-    for (size_t i = 0; i < tGlyph.nPoints; i++) {
-        fPoints.push_back(tGlyph.points[i]);
-        fFlags.push_back(tGlyph.flags[i]);
-
-        i32 pFlag = tGlyph.flags[i];
-        Point p = tGlyph.points[i];
-
-        if (i == tGlyph.contourEnds[currentContour] || i >= tGlyph.nPoints - 1) {
-            size_t cPos = currentContour > 0 ? tGlyph.contourEnds[currentContour-1]+1 : 0;
-            assert(cPos < tGlyph.nPoints);
-
-            //check for an implied point
-            i32 flg = tGlyph.flags[cPos];
-            bool oc = GetFlagValue(flg, PointFlag_onCurve);
-
-            //add implied point in-between if needed
-            if (oc == GetFlagValue(pFlag, PointFlag_onCurve)) {
-                fPoints.push_back(pLerp(p, tGlyph.points[cPos], 0.5f));
-                fFlags.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, !oc));
-            }
-
-            //add point
-            fPoints.push_back(tGlyph.points[cPos]);
-            fFlags.push_back(flg);
-            
-            currentContour++;
-#ifdef MSFL_TTFRENDER_DEBUG
-            std::cout << "Finished Contour: " << currentContour << " / " << tGlyph.nContours << std::endl;
-#endif
-            continue;
-        }
-
-        u32 oCurve;
-
-        if (
-            i < tGlyph.nPoints - 1 && 
-            (oCurve = GetFlagValue(pFlag, PointFlag_onCurve)) == GetFlagValue(tGlyph.flags[i+1], PointFlag_onCurve)
-        ) {
-            //add implied point
-            fPoints.push_back(pLerp(p, tGlyph.points[i+1], 0.5f));
-            fFlags.push_back(ModifyFlagValue(pFlag, PointFlag_onCurve, !oCurve));
-        }
-    }
+    gPData cleanDat = cleanGlyphPoints(tGlyph);
+    std::vector<Point> fPoints = cleanDat.p;
+    std::vector<i32> fFlags = cleanDat.f;
 
 #ifdef MSFL_TTFRENDER_DEBUG
     srand(time(NULL));

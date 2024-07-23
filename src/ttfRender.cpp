@@ -87,6 +87,57 @@ void DrawPoint(BitmapGraphics *g, float x, float y) {
     g->DrawPixel(x, y);
 }
 
+const static float epsilon = 0.00001f;
+const static float invEpsilon = 1 / epsilon;
+#define EPSILIZE(v) (floor((v)*invEpsilon)*epsilon)
+
+struct f_roots {
+    float r0, r1;
+    i32 nRoots = 0;
+};
+
+f_roots getRoots(float a, float b, float c) {
+    if (EPSILIZE(a) == 0.0f) 
+        return {
+            .nRoots = 0
+        };
+    const float root = EPSILIZE(((b*b) - (4*a*c))), ida = 1 / (2 * a);
+    if (root < 0.0f)
+        return {
+            .nRoots = 0
+        };
+    if (root != 0.0f)
+        return {
+            .r0 = (-b + root) * ida,
+            .r1 = (-b - root) * ida,
+            .nRoots = 2
+        };
+    else
+        return {
+            .r0 = (-b + root) * ida,
+            .nRoots = 1
+        };
+}
+
+i32 intersectsCurve(Point p0, Point p1, Point p2, Point e) {
+    p0.y -= e.y;
+    p1.y -= e.y;
+    p2.y -= e.y;
+    const float a = p0.y - 2 * p1.y + p2.y, b = 2 * p1.y - 2 * p0.y, c = p0.y;
+
+    f_roots _roots = getRoots(a, b, c);
+
+    if (_roots.nRoots <= 0) return 0; //no roots so no intersection
+
+    //check le roots
+    i32 nRoots = 0;
+
+    if (_roots.r0 >= 0.0f && _roots.r0 <= 1.0f) nRoots++;
+    if (_roots.nRoots > 1 && _roots.r1 >= 0.0f && _roots.r1 <= 1.0f) nRoots++;
+
+    return nRoots;
+}
+
 i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
     i32 mapW = tGlyph.xMax - tGlyph.xMin,
         mapH = tGlyph.yMax - tGlyph.yMin;

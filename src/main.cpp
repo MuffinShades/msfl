@@ -153,7 +153,7 @@ int main() {
 
 	Glyph tGlyph = ttfParse::ReadTTFGlyph("/Users/jamesweigand/Desktop/testingFolder/Arial.ttf", 69u);
 	
-	ttfRender::RenderGlyphToBitmap(tGlyph, &ttfBitmap, 0.1f);
+	ttfRender::RenderGlyphToBitmap(tGlyph, &ttfBitmap, 0.05f);
 
 	i32 errCode = BitmapParse::WriteToFile("/Users/jamesweigand/Desktop/testingFolder/testGlyph.bmp", &ttfBitmap);
 

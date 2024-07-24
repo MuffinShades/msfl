@@ -92,7 +92,7 @@ const static float invEpsilon = 1 / epsilon;
 #define EPSILIZE(v) (floor((v)*invEpsilon)*epsilon)
 
 struct f_roots {
-    float r0, r1;
+    float r0 = 0.0f, r1 = 0.0f;
     i32 nRoots = 0;
 };
 
@@ -110,11 +110,14 @@ f_roots getRoots(float a, float b, float c) {
         return {
             .nRoots = 0
         };
-    const float root = EPSILIZE(((b*b) - (4*a*c))), ida = 1 / (2 * a);
+    float root = EPSILIZE(
+        (b*b) - (4.0f*a*c)
+    ), ida = 1.0f / (2.0f * a);
     if (root < 0.0f)
         return {
             .nRoots = 0
         };
+    root = EPSILIZE(sqrtf(root));
     if (root != 0.0f)
         return {
             .r0 = (-b + root) * ida,
@@ -141,10 +144,13 @@ f_roots getRoots(float a, float b, float c) {
  * 
  */
 i32 intersectsCurve(Point p0, Point p1, Point p2, Point e) {
+
+    //offset points
     p0.y -= e.y;
     p1.y -= e.y;
     p2.y -= e.y;
-    const float a = p0.y - 2 * p1.y + p2.y, b = 2 * p1.y - 2 * p0.y, c = p0.y;
+
+    const float a = (p0.y - 2 * p1.y) + p2.y, b = 2 * p1.y - 2 * p0.y, c = p0.y;
 
     f_roots _roots = getRoots(a, b, c);
 
@@ -153,7 +159,10 @@ i32 intersectsCurve(Point p0, Point p1, Point p2, Point e) {
     //check le roots
     i32 nRoots = 0;
 
-    if (_roots.r0 >= 0.0f && _roots.r0 <= 1.0f) nRoots++;
+    _roots.r0 -= e.x;
+    _roots.r1 -= e.y;
+
+    if (                     _roots.r0 >= 0.0f && _roots.r0 <= 1.0f) nRoots++;
     if (_roots.nRoots > 1 && _roots.r1 >= 0.0f && _roots.r1 <= 1.0f) nRoots++;
 
     return nRoots;
@@ -274,6 +283,12 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
     srand(time(NULL));
 #endif
 
+    struct _curve {
+        Point p0, p1, p2;
+    };
+
+    std::vector<_curve> bCurves;
+
     for (size_t i = 0; i < fPoints.size(); i++) {
         i32 pFlag = fFlags[i];
         Point p = fPoints[i];
@@ -299,12 +314,21 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
 
             //else draw le curve
             for (float t = 0.0f; t < 1.0f; t += invStep) {
+                const _curve currentCurve = {
+                    .p0 = ScalePoint(fPoints[i - 2], scale),
+                    .p1 = ScalePoint(fPoints[i - 1], scale),
+                    .p2 = ScalePoint(p, scale)
+                };
+
                 Point np = bezier3(
-                    ScalePoint(fPoints[i - 2], scale), 
-                    ScalePoint(fPoints[i - 1], scale), 
-                    ScalePoint(p, scale), 
+                    currentCurve.p0, 
+                    currentCurve.p1, 
+                    currentCurve.p2, 
                     t
                 );
+
+                //add a curve
+                bCurves.push_back(currentCurve);
 
                 //g.SetColor((np.x / (float)mapW) * 255.0f, (np.y / (float)mapH) * 255.0f, 255, 255);
                 //DrawPoint(&g, np.x - tGlyph.xMin * scale, np.y - tGlyph.yMin * scale);
@@ -319,6 +343,24 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
             g.SetColor((i / (float) fPoints.size()) * 255.0f,0.0f,255.0f - ((i / (float) fPoints.size()) * 255.0f),255);
             g.DrawPixel(p.x * scale, p.y * scale);
 #endif
+        }
+    }
+
+    //try just intersting over all the pixels
+    g.SetColor(255,255,255,255);
+    for (float y = 0; y < mapH; y++) {
+        for (float x = 0; x < mapW; x++) {
+            i32 i = 0;
+            //intersection thingy
+            for (auto& c : bCurves)
+                i += intersectsCurve(c.p0, c.p1, c.p2, {x, y});
+
+            //std::cout << i << std::endl;
+            //g.SetColor((i32)(i == 0) * 255, (i32)(i == 1) * 255, (i32)(i >= 2) * 255, 255);
+
+            if (i != 0 && i % 2 != 0) {
+                g.DrawPixel(x, y);
+            }
         }
     }
     

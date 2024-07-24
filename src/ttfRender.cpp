@@ -131,6 +131,11 @@ f_roots getRoots(float a, float b, float c) {
         };
 }
 
+//verifys a given root is a valid intersection
+bool _vRoot(float r, Point p0, Point p1, Point p2, Point e) {
+    return r >= 0.0f && r <= 1.0f && bezier3(p0, p1, p2, r).x > e.x;
+};
+
 /**
  * 
  * intersectsCurve
@@ -159,11 +164,8 @@ i32 intersectsCurve(Point p0, Point p1, Point p2, Point e) {
     //check le roots
     i32 nRoots = 0;
 
-    //_roots.r0 -= e.x;
-    //_roots.r1 -= e.y;
-
-    if (                     _roots.r0 >= 0.0f && _roots.r0 <= 1.0f) nRoots++;
-    if (_roots.nRoots > 1 && _roots.r1 >= 0.0f && _roots.r1 <= 1.0f) nRoots++;
+    if (                     _vRoot(_roots.r0, p0, p1, p2, e)) nRoots++;
+    if (_roots.nRoots > 1 && _vRoot(_roots.r1, p0, p1, p2, e)) nRoots++;
 
     return nRoots;
 }
@@ -346,6 +348,8 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
         }
     }
 
+    const float _Tx = -tGlyph.xMin * scale, _Ty = -tGlyph.yMin * scale;
+
     //try just intersting over all the pixels
     g.SetColor(255,255,255,255);
     for (float y = 0; y < mapH; y++) {
@@ -353,13 +357,11 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
             i32 i = 0;
             //intersection thingy
             for (auto& c : bCurves)
-                i += intersectsCurve(c.p0, c.p1, c.p2, {x, y}) > 0 ? 1 : 0;
-
-            std::cout << i << std::endl;
+                i += intersectsCurve(c.p0, c.p1, c.p2, {x, y});
             //g.SetColor((i32)(i == 0) * 255, (i32)(i == 1) * 255, (i32)(i >= 2) * 255, 255);
 
             if (i != 0 && i % 2 != 0) {
-                g.DrawPixel(x, y);
+                g.DrawPixel(x + _Tx, y + _Ty);
             }
         }
     }

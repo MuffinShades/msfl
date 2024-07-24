@@ -27,8 +27,8 @@ function bezier3(p0, p1, p2, t) {
 }
 
 function epsilize(v) {
-    const e = 0.0001, ie = 1 / e;
-    return Math.floor(v * ie) * e;
+    const ep = 0.0001, ie = 1 / ep;
+    return Math.floor(v * ie) * ep;
 }
 
 function getRoots(a, b, c) {
@@ -77,22 +77,18 @@ function intersectsCurve(curve, e) {
 
     var _roots = getRoots(a, b, c);
 
-    const a2 = (p0.x - 2 * p1.x) + p2.x, b2 = 2 * p1.x - 2 * p0.x, c2 = p0.x;
-
-    var _roots2 = getRoots(a2, b2, c2);
-
-    console.log(_roots);
-
     if (_roots.nRoots <= 0) return 0; //no roots so no intersection
 
     //check le roots
     var nRoots = 0;
 
-    //_roots.r0 -= e.x;
-    //_roots.r1 -= e.x;
+    var validRoot = function(root, p0, p1, p2, e) {
+        return root >= 0 && root <= 1 && bezier3(p0, p1, p2, root).x < e.x;
+    }
 
-    if (                     _roots.r0 >= 0 && _roots.r0 <= 1 && _roots2.r0 >= 0) nRoots++;
-    if (_roots.nRoots > 1 && _roots.r1 >= 0 && _roots.r1 <= 1) nRoots++;
+    if (                     validRoot(_roots.r0, p0, p1, p2, e)) nRoots++;
+    if (_roots.nRoots > 1 && validRoot(_roots.r1, p0, p1, p2, e)) nRoots++;
+    
     return nRoots;
 }
 

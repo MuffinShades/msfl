@@ -88,7 +88,7 @@ void DrawPoint(BitmapGraphics *g, float x, float y) {
 }
 
 const static float epsilon = 0.00001f;
-const static float invEpsilon = 1 / epsilon;
+const static float invEpsilon = 1.0f / epsilon;
 #define EPSILIZE(v) (floor((v)*invEpsilon)*epsilon)
 
 struct f_roots {
@@ -159,8 +159,8 @@ i32 intersectsCurve(Point p0, Point p1, Point p2, Point e) {
     //check le roots
     i32 nRoots = 0;
 
-    _roots.r0 -= e.x;
-    _roots.r1 -= e.y;
+    //_roots.r0 -= e.x;
+    //_roots.r1 -= e.y;
 
     if (                     _roots.r0 >= 0.0f && _roots.r0 <= 1.0f) nRoots++;
     if (_roots.nRoots > 1 && _roots.r1 >= 0.0f && _roots.r1 <= 1.0f) nRoots++;
@@ -353,9 +353,9 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
             i32 i = 0;
             //intersection thingy
             for (auto& c : bCurves)
-                i += intersectsCurve(c.p0, c.p1, c.p2, {x, y});
+                i += intersectsCurve(c.p0, c.p1, c.p2, {x, y}) > 0 ? 1 : 0;
 
-            //std::cout << i << std::endl;
+            std::cout << i << std::endl;
             //g.SetColor((i32)(i == 0) * 255, (i32)(i == 1) * 255, (i32)(i >= 2) * 255, 255);
 
             if (i != 0 && i % 2 != 0) {

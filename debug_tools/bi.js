@@ -26,6 +26,76 @@ function bezier3(p0, p1, p2, t) {
     return lerpPoint(i0, i1, t);
 }
 
+function epsilize(v) {
+    const e = 0.0001, ie = 1 / e;
+    return Math.floor(v * ie) * e;
+}
+
+function getRoots(a, b, c) {
+    if (epsilize(a) == 0)
+        return {
+            nRoots: 0
+        }
+
+    var root = epsilize(
+        (b*b) - (4*a*c)
+    ), ida = 1 / (2 * a);
+
+    if (root < 0)
+        return {
+            nRoots: 0
+        }
+
+    root = epsilize(Math.sqrt(root));
+
+    if (root != 0)
+        return {
+            r0: (-b + root) * ida,
+            r1: (-b - root) * ida,
+            nRoots: 2
+        };
+    else
+        return {
+            r0: (-b + root) * ida,
+            nRoots: 1
+        };
+}
+
+function intersectsCurve(curve, e) {
+    var p0 = {
+        x: curve.p0.x,
+        y: curve.p0.y - e.y
+    }, p1 = {
+        x: curve.p1.x,
+        y: curve.p1.y - e.y
+    }, p2 = {
+        x: curve.p2.x,
+        y: curve.p2.y - e.y
+    };
+
+    const a = (p0.y - 2 * p1.y) + p2.y, b = 2 * p1.y - 2 * p0.y, c = p0.y;
+
+    var _roots = getRoots(a, b, c);
+
+    const a2 = (p0.x - 2 * p1.x) + p2.x, b2 = 2 * p1.x - 2 * p0.x, c2 = p0.x;
+
+    var _roots2 = getRoots(a2, b2, c2);
+
+    console.log(_roots);
+
+    if (_roots.nRoots <= 0) return 0; //no roots so no intersection
+
+    //check le roots
+    var nRoots = 0;
+
+    //_roots.r0 -= e.x;
+    //_roots.r1 -= e.x;
+
+    if (                     _roots.r0 >= 0 && _roots.r0 <= 1 && _roots2.r0 >= 0) nRoots++;
+    if (_roots.nRoots > 1 && _roots.r1 >= 0 && _roots.r1 <= 1) nRoots++;
+    return nRoots;
+}
+
 var b = {
     p0: {
         x: 50, y: 0
@@ -79,8 +149,15 @@ function render() {
     ctx.fillStyle = '#fa0';
     RenderPoint(p, POINT_SIZE);
 
-    //draw curve
+    //intersection test
+    var nIntersections = intersectsCurve(b, p);
+
     ctx.strokeStyle = '#fff';
+
+    if (nIntersections > 0)
+        ctx.strokeStyle = '#0f0';
+
+    //draw curve
     ctx.fillStyle = '#f00';
     renderCurve(b, POINT_SIZE);
 }
@@ -104,6 +181,10 @@ window.addEventListener('mousedown', function(e) {
             return;
         }
     }
+
+    //check to see if intersection between main point
+    if (Math.sqrt(((mx - p.x)**2) + ((my - p.y)**2)) <= POINT_SIZE)
+        targetPoint = p;
 });
 
 window.addEventListener('mousemove', function(e) {

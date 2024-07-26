@@ -358,11 +358,9 @@ i32 ttfRender::RenderGlyphToBitmap(Glyph tGlyph, Bitmap *bmp, float scale) {
             //intersection thingy
             for (auto& c : bCurves)
                 i += intersectsCurve(c.p0, c.p1, c.p2, {x, y});
-            //g.SetColor((i32)(i == 0) * 255, (i32)(i == 1) * 255, (i32)(i >= 2) * 255, 255);
 
-            if (i != 0 && i % 2 != 0) {
+            if ((i & 1) != 0)
                 g.DrawPixel(x + _Tx, y + _Ty);
-            }
         }
     }
     

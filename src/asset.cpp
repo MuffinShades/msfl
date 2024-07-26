@@ -21,10 +21,10 @@ struct fPos {
 };
 
 fPos _createFPosErr(int errCode) {
-    fPos res;
-    res.error_code = errCode;
-    res.pos = 0;
-    return res;
+    return {
+        .error_code = errCode,
+        .pos = 0
+    };
 }
 
 struct Version {
@@ -534,6 +534,57 @@ Asset *AssetContainer::GetAsset(std::string id) {
     if (target->getType() != _aTypeAsset)
         return nullptr;
     return target->GetAssetData();
+}
+
+#include "jparse.hpp"
+
+struct _jAsset {
+    std::string path, src;
+};
+
+//json struct interator to get the file map from the json struct
+void _jfItr(std::vector<_jAsset>* _toAdd, JStruct currentStruct, std::string cPath) {
+    for (auto& tok : currentStruct.body) {
+        cPath += tok.label + ".";
+        
+        if (tok.body != nullptr)
+            _jfItr(_toAdd, *tok.body, cPath);
+        else
+            _toAdd->push_back({
+                .path = cPath,
+                .src = tok.rawValue
+            });
+    }
+}
+
+/**
+ * 
+ * AssetParse::WriteToFile (jsonMap)
+ * 
+ * writes a asset file based on a .json file
+ * instead of a AssetStruct. Good for first
+ * time creation of asset files
+ * 
+ */
+i32 AssetParse::WriteToFile(std::string src, std::string jsonMap) {
+    if (src.length() <= 0)
+        return 1;
+
+    JStruct jMap = jparse::parseStr(jsonMap.c_str());
+    AssetStruct fStruct; //file struct
+
+    std::vector<_jAsset> _toAdd;
+
+    _jfItr(&_toAdd, jMap, ""); //get all the paths from the json file
+
+
+    //add elements and their path
+    for (_jAsset& aTarget : _toAdd) {
+        std::string path = aTarget.path.substr(0, aTarget.path.length() - 1);
+        fStruct.AddAsset(path, aTarget.src);
+    }
+
+    return AssetParse::WriteToFile(src, &fStruct);
 }
 
 //parsing le asset file... fun

@@ -93,7 +93,10 @@ class AssetParse {
 public:
     static int WriteToFile(std::string src, AssetStruct *dat);
     static byte *WriteToBytes(AssetStruct *dat);
+    static int WriteToFile(std::string src, std::string jsonMap);
     static AssetStruct ParseAssetFile(std::string src);
     static AssetStruct ParseDat(byte *dat, size_t sz);
     static AssetFile ReadFile(std::string src);
+    static JStruct ReadFileMapAsJson(std::string src);
+    static JStruct ReadFileMapAsJson(byte *dat, size_t sz);
 };

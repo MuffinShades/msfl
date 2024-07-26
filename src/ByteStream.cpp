@@ -127,7 +127,6 @@ void ByteStream::writeNBytesAsVal(unsigned long long v, size_t nBytes)
     }
     case bmode_LittleEndian:
     {
-        std::cout << "Writing: " << nBytes << std::endl;
         for (int i = 0; i < nBytes; i++)
             this->writeByte((v >> (i*8)) & 0xff);
         break;

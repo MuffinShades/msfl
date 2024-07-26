@@ -151,9 +151,9 @@ int main() {
 
 	Bitmap ttfBitmap;
 
-	Glyph tGlyph = ttfParse::ReadTTFGlyph("/Users/jamesweigand/Desktop/testingFolder/Arial.ttf", 69u);
+	Glyph tGlyph = ttfParse::ReadTTFGlyph("/Users/jamesweigand/Desktop/testingFolder/Arial.ttf", 72u);
 	
-	ttfRender::RenderGlyphToBitmap(tGlyph, &ttfBitmap, 0.05f);
+	ttfRender::RenderGlyphToBitmap(tGlyph, &ttfBitmap, 0.1f);
 
 	i32 errCode = BitmapParse::WriteToFile("/Users/jamesweigand/Desktop/testingFolder/testGlyph.bmp", &ttfBitmap);
 

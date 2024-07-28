@@ -27,3 +27,5 @@ inline static float lerp(float a, float b, float t) {
 struct Point {
     float x, y;
 };
+
+#define GMask(l) ((1 << (l)) - 1)

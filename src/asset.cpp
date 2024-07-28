@@ -29,8 +29,8 @@ fPos _createFPosErr(int errCode) {
 
 struct Version {
 public:
-    const int mainVersion, subVersion, protoVersion;
-    Version(const int mv, const int sv, const int pv) : mainVersion(mv), subVersion(sv), protoVersion(pv) {}
+    int mainVersion, subVersion, protoVersion;
+    Version(int mv, int sv, int pv) : mainVersion(mv), subVersion(sv), protoVersion(pv) {}
     unsigned long long getLong() {
         return (this->mainVersion << 32) | (this->subVersion << 16) | (this->protoVersion);
     }
@@ -600,9 +600,35 @@ _AssetHeader read_header(ByteStream *stream) {
         return _h;
 
     //now read rest of file header stuff
+    u32 _fSig = stream->readUInt32();
 
+    if (_fSig != _h.sig)
+        return _h;
+
+    //read file version
+    u64 fVersion = stream->readUInt64();
+
+    const u32 _vMask = GMask(sizeof(i16) * 8);
+
+    _h.fVersion = Version(
+        (fVersion >> 32) & _vMask,
+        (fVersion >> 16) & _vMask,
+        (fVersion >> 00) & _vMask
+    );
+
+    return _h;
 }
 
 JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
+    ByteStream stream = ByteStream(dat, sz);
 
+    //read file header
+    _AssetHeader fHeader = read_header(&stream);
+
+    //get position of root node
+    const size_t rootPos = stream.readUInt32();
+    stream.seek(rootPos);
+
+    //now start reading stuff
+    
 }

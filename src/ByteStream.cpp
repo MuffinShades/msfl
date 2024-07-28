@@ -208,4 +208,27 @@ size_t ByteStream::skipBytes(size_t nBytes) {
 		return oPos;
 	}
 
+const char *ByteStream::readCStr(size_t len) {
+    if (len <= 0)
+        return nullptr;
+
+    char *_by = new char[len], *cur = _by, *e = _by + len;
+    ZeroMem(_by, len);
+
+    do {
+        *cur = (char) this->readByte();
+    } while (++cur != e);
+
+    return const_cast<const char*>(_by);
+}
+
+std::string ByteStream::readStr(size_t len) {
+    const char* cStr = this->readCStr(len);
+
+    if (cStr == nullptr)
+        return std::string("");
+    else
+        return std::string(cStr);
+}
+
 //welp

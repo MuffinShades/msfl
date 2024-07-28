@@ -48,6 +48,7 @@ public:
 	void writeBytes(byte *dat, size_t sz);
 	void free() {
 		if (this->bytes != nullptr) delete[] this->bytes;
+		this->bytes = nullptr;
 	}
 	~ByteStream();
 	size_t getSize() {
@@ -63,4 +64,6 @@ public:
 		return this->readPos;
 	}
 	size_t skipBytes(size_t nBytes);
+	const char *readCStr(size_t len);
+	std::string readStr(size_t len);
 };

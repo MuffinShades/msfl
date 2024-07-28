@@ -91,12 +91,14 @@ public:
 
 class AssetParse {
 public:
-    static int WriteToFile(std::string src, AssetStruct *dat);
+    static int WriteToFile(std::string src, AssetStruct *dat); //done
     static byte *WriteToBytes(AssetStruct *dat);
-    static int WriteToFile(std::string src, std::string jsonMap);
-    static AssetStruct ParseAssetFile(std::string src);
+    static int WriteToFile(std::string src, std::string jsonMap); //done
+    static AssetStruct ParseAssetFile(std::string src); //done
     static AssetStruct ParseDat(byte *dat, size_t sz);
     static AssetFile ReadFile(std::string src);
     static JStruct ReadFileMapAsJson(std::string src);
     static JStruct ReadFileMapAsJson(byte *dat, size_t sz);
+    static Asset ExtractAssetFromFile(std::string src, std::string path);
+    static Asset ExtractAssetFromData(byte *dat, size_t sz);
 };

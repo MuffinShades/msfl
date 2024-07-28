@@ -121,7 +121,15 @@ int main() {
 		"/Users/jamesweigand/Desktop/testingFolder/asset2.json"
 	);
 	std::cout << "Writing to file..." << std::endl;
-	AssetParse::WriteToFile("/Users/jamesweigand/Desktop/testingFolder/assetPak1.ap", &testAsset);
+	arr_container<byte> assetMapBytes = FileWriter::ReadBytesFromBinFile("/Users/jamesweigand/Desktop/testingFolder/assetMapTest.json");
+	std::string assetMapStr = std::string(
+		const_cast<const char*> (
+			reinterpret_cast<char*>(assetMapBytes.dat)
+		)
+	);
+	AssetParse::WriteToFile("/Users/jamesweigand/Desktop/testingFolder/assetPak1.ap", assetMapStr);
+
+	delete[] assetMapBytes.dat;
 
 	//ttf file testing
 	ttfFile testFile = ttfParse::ParseTTFFile("/Users/jamesweigand/Desktop/testingFolder/Arial.ttf");

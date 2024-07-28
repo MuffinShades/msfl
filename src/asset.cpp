@@ -31,7 +31,7 @@ struct Version {
 public:
     const int mainVersion, subVersion, protoVersion;
     Version(const int mv, const int sv, const int pv) : mainVersion(mv), subVersion(sv), protoVersion(pv) {}
-    unsigned long getLong() {
+    unsigned long long getLong() {
         return (this->mainVersion << 32) | (this->subVersion << 16) | (this->protoVersion);
     }
 };
@@ -150,8 +150,6 @@ void AssetStruct::AddAsset(std::string path, byte *data, size_t sz) {
             current = nxt;
         else
             current = current->AddContainer(nId);
-
-        std::cout << "asz " << current->assets.size() << std::endl;
     }
 
     if (current == nullptr)
@@ -213,17 +211,13 @@ void write_header(_AssetHeader header, ByteStream *stream) {
     byte *fBytes = ptrconverter::convertTo<const char, byte>(
         header.fStr, 4
     );
-    for (int i = 0; i < 4; i++)
-        std::cout << "fByte: " << fBytes[i] << std::endl;
+
     stream->writeBytes(
         fBytes, 4
     );
 
-    std::cout << "Sig done writing: " << header.sig << std::endl;
-
     //write sig
     stream->writeUInt32((unsigned int)header.sig);
-    std::cout << "Sig done 2" << std::endl;
     //write file version
     stream->writeUInt64(header.fVersion.getLong());
     
@@ -270,7 +264,6 @@ const int construct_FINFO(bool encryption, bool streamable, int compressionType)
 
 //TODO: create this function to write assets
 fPos write_asset(AssetContainer *container, ByteStream *stream) {
-    std::cout << "WRITING ASSET!" << " " << container->GetId() << std::endl;
     ByteStream aStream;
     Asset *aData = container->GetAssetData();
 
@@ -331,8 +324,9 @@ fPos write_asset(AssetContainer *container, ByteStream *stream) {
 
     //write chunk and clean up
     delete[] compressedBytes;
-    fPos rPos;
-    rPos.pos = stream->getSize();
+    fPos rPos = {
+        .pos = stream->getSize()
+    };
     write_chunk(_cty_Asset, &aStream, stream); //TODO: make this not free streams or what not
     
     return rPos;
@@ -366,7 +360,6 @@ void write_loc(std::string id, size_t loc, ByteStream *stream) {
     stream->writeByte(nLocBytes);
     stream->writeNBytesAsVal(loc, nLocBytes);
 }
-
 
 /**
  * 
@@ -437,9 +430,10 @@ fPos write_container(AssetContainer *container, ByteStream *stream) {
     }
 
     //res
-    fPos res;
-    res.pos = stream->getSize();
-    res.error_code = 0;
+    fPos res = {
+        .pos = stream->getSize(),
+        .error_code = 0
+    };
 
     std::cout << "WRITING STREAM: " << cStream.getSize() << std::endl;
 
@@ -448,7 +442,7 @@ fPos write_container(AssetContainer *container, ByteStream *stream) {
     //cStream.free();
 
     //return yk
-    return res; //0 no error
+    return res;
 }
 
 int AssetParse::WriteToFile(std::string src, AssetStruct *dat) {
@@ -459,12 +453,8 @@ int AssetParse::WriteToFile(std::string src, AssetStruct *dat) {
 
     _AssetHeader head;
 
-    std::cout << "Writing header..." << std::endl;
-
     //create and write header
     write_header(head, &oStream);
-
-    std::cout << "Header done!" << std::endl;
 
     //now write the root to the data stream
     fPos rootPos = write_container(dat->GetRoot(), &datStream);
@@ -475,7 +465,6 @@ int AssetParse::WriteToFile(std::string src, AssetStruct *dat) {
     datStream.free();
 
     //TODO: write the bytes to the output file
-    std::cout << "Writing to file " << src << "... "<< std::endl;
     FileWriter::WriteToBinFile(src, oStream.getBytePtr(), oStream.getSize());
     oStream.free();
 
@@ -545,13 +534,11 @@ struct _jAsset {
 //json struct interator to get the file map from the json struct
 void _jfItr(std::vector<_jAsset>* _toAdd, JStruct currentStruct, std::string cPath) {
     for (auto& tok : currentStruct.body) {
-        cPath += tok.label + ".";
-        
         if (tok.body != nullptr)
-            _jfItr(_toAdd, *tok.body, cPath);
+            _jfItr(_toAdd, *tok.body, cPath + (tok.label + "."));
         else
             _toAdd->push_back({
-                .path = cPath,
+                .path = cPath + (tok.label + "."),
                 .src = tok.rawValue
             });
     }
@@ -590,4 +577,32 @@ i32 AssetParse::WriteToFile(std::string src, std::string jsonMap) {
 //parsing le asset file... fun
 AssetStruct AssetParse::ParseAssetFile(std::string src) {
     //TODO: this function
+}
+
+bool sig_verify(std::string _fStr, _AssetHeader _h) {
+    size_t _sigPos = 0;
+    for (char c : _fStr)
+        if (c != _h.fStr[_sigPos++])
+            return false;
+    return true;
+}
+
+//read header from file
+_AssetHeader read_header(ByteStream *stream) {
+    size_t jPos = stream->seek(0);
+
+    _AssetHeader _h = {};
+
+    std::string _fStr = stream->readStr(4);
+
+    //verify a valid signiture
+    if (!sig_verify(_fStr, _h))
+        return _h;
+
+    //now read rest of file header stuff
+
+}
+
+JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
+
 }

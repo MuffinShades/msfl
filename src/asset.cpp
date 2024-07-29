@@ -237,6 +237,7 @@ void write_chunk(enum _ChunkType chunkType, ByteStream *chunkStream, ByteStream 
     //write chunk label / identifier
     const std::string chunkLabel = chunkTypeStrs[chunkType];
 
+    outStream->writeByte(chunkLabel.length() & 0xff);
     outStream->writeBytes(
         reinterpret_cast<byte*>(
             const_cast<char*>(chunkLabel.c_str())
@@ -248,11 +249,12 @@ void write_chunk(enum _ChunkType chunkType, ByteStream *chunkStream, ByteStream 
     const size_t cSz = chunkStream->getSize();
     outStream->writeUInt32(cSz);
 
+    //TODO: crc32
+    outStream->writeUInt32(0xffffffff);
+
     //write chunk data
     outStream->writeBytes(chunkStream->getBytePtr(), cSz);
     chunkStream->free();
-
-    //TODO: crc32
 }
 
 const int construct_FINFO(bool encryption, bool streamable, int compressionType) {
@@ -619,6 +621,67 @@ _AssetHeader read_header(ByteStream *stream) {
     return _h;
 }
 
+
+//File:
+//
+// asset id len
+// asset id
+// data size
+// fInfo
+// data
+
+//Asset:
+//
+// container label len
+// container label
+// nassets
+// children / assets...
+// 1 byte - len of name
+// name
+// 1 byte - size of offset
+// offset
+
+struct _fChunk {
+    _ChunkType ty;
+    size_t datSz;
+    u32 crc32;
+};
+
+iErrorWrap<_fChunk> read_chunk(ByteStream *stream) {
+    assert(stream != nullptr);
+    _fChunk res = {
+        .ty = _cty_max
+    };
+
+    const size_t ll = stream->readByte();
+
+    if (ll <= 0)
+        return iErrorWrap<_fChunk>(res, iErrorWrap<i32>::CreateGenericError(1, ""));
+
+
+    //get chunk type
+    std::string chunkLbl = stream->readStr(ll);
+
+    for (size_t i = 0; i < _cty_max; i++) 
+        if (chunkLbl == chunkTypeStrs[i]) {
+            res.ty = (_ChunkType) i;
+            break;
+        }
+
+    if (res.ty == _cty_max)
+        return iErrorWrap<_fChunk>(res, iErrorWrap<i32>::CreateGenericError(1, ""));
+
+    //get chunk size
+    res.datSz = stream->readUInt32();
+    res.crc32 = stream->readUInt32();
+
+    return iErrorWrap<_fChunk>(res, nullptr);
+}
+
+void map_file(ByteStream *stream, JStruct *s) {
+    _fChunk tChunk = read_chunk(stream);
+}
+
 JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
     ByteStream stream = ByteStream(dat, sz);
 
@@ -629,6 +692,9 @@ JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
     const size_t rootPos = stream.readUInt32();
     stream.seek(rootPos);
 
-    //now start reading stuff
-    
+    JStruct res;
+
+    map_file(&stream, &res);
+
+    return res;
 }

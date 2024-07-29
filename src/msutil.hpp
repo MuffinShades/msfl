@@ -29,3 +29,30 @@ struct Point {
 };
 
 #define GMask(l) ((1 << (l)) - 1)
+
+struct ErrorDescriptor {
+    i32 code = 0;
+    std::string msg = "No error";
+};
+
+template<class _Ty> class iErrorWrap {
+private:
+    std::vector<ErrorDescriptor*> genericErrs;
+public:
+    _Ty v;
+    iErrorWrap(_Ty v, ErrorDescriptor* err = nullptr) : v(v) : err(err) {};
+    struct ErrorDescriptor* err;
+    _Ty operator _Ty() {
+        return this->v;
+    }
+    bool err() {
+        if (this->err != nullptr)
+            return this->err->code == 0;
+        else
+            return false;
+    }
+
+    static ErrorDescriptor* CreateGenericError(i32 code, std::string desc) {
+        return nullptr;
+    }
+};

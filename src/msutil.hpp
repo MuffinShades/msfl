@@ -56,3 +56,22 @@ public:
         return nullptr;
     }
 };
+
+static inline std::vector<std::string> SplitString(std::string str, const char delim) {
+    std::vector<std::string> res;
+    const size_t len = str.length();
+    std::string collector = "";
+    const char *cStr = str.c_str();
+
+    for (size_t i = 0; i < len; i++) {
+        if (cStr[i] == delim) {
+            res.push_back(collector);
+            collector = "";
+        } else
+            collector += cStr[i];
+    }
+
+    res.push_back(collector);
+
+    return res;
+}

@@ -17,6 +17,14 @@
 #include "jparse.hpp"
 #include "ByteStream.hpp"
 #include "FileWriter.h"
+#include "Date.hpp"
+
+struct AssetDescriptor {
+    size_t sz;
+    std::string fileType;
+    Date created;
+    Date modified;
+};
 
 struct Asset {
     std::string fname;
@@ -65,6 +73,7 @@ public:
     Asset GetAsset(std::string path);
     void AddAsset(std::string path, byte *data, size_t sz);
     void AddAsset(std::string path, std::string fSrc);
+    void AddAsset(std::string path, AssetDescriptor desc);
     AssetContainer *GetRoot() {
         return this->map;
     };

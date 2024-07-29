@@ -678,8 +678,41 @@ iErrorWrap<_fChunk> read_chunk(ByteStream *stream) {
     return iErrorWrap<_fChunk>(res, nullptr);
 }
 
-void map_file(ByteStream *stream, JStruct *s) {
+void map_file(ByteStream *stream, AssetStruct *s, std::string path = "") {
     _fChunk tChunk = read_chunk(stream);
+
+    switch (tChunk.ty) {
+        //asset mapping
+        case _cty_Asset: {
+            
+            break;
+        }
+        //asset container mapping
+        case _cty_Container: {
+            const size_t n_len = stream->readByte();
+            if (n_len <= 0) return;
+            const std::string n = stream->readStr(n_len);
+            path += (n + ".");
+            size_t nc = stream->readUInt32();
+            if (nc > 0)
+                while (nc--) {
+                    size_t an_len = stream->readByte(), o_len;
+                    if (an_len <= 0) continue;
+                    stream->skipBytes(an_len);
+                    o_len = stream->readByte();
+                    if (o_len <= 0) continue;
+                    const size_t off = stream->readBytesAsVal(o_len),
+                                 r_pos = stream->seek(off);
+                    map_file(stream, s, path);
+                    stream->seek(r_pos);
+                }
+            else
+                s->AddAsset(path, ""); //add null asset or branch with no fruit
+            break;
+        }
+        default:
+            return; //invalid chunk
+    }
 }
 
 JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
@@ -694,7 +727,10 @@ JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
 
     JStruct res;
 
-    map_file(&stream, &res);
+    AssetStruct intStruct;
+    map_file(&stream, &intStruct);
+
+    //convert asset struct to JStruct
 
     return res;
 }

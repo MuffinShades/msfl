@@ -880,6 +880,7 @@ CMakeFiles/msfl.dir/src/main.cpp.o: \
   /Users/jamesweigand/Documents/msfl/src/ptrconverter.hpp \
   /Users/jamesweigand/Documents/msfl/src/jparse.hpp \
   /Users/jamesweigand/Documents/msfl/src/asset.hpp \
+  /Users/jamesweigand/Documents/msfl/src/Date.hpp \
   /Users/jamesweigand/Documents/msfl/src/ttf.hpp \
   /Users/jamesweigand/Documents/msfl/src/ttfRender.hpp \
   /Users/jamesweigand/Documents/msfl/src/bitmap.hpp \

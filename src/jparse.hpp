@@ -19,17 +19,21 @@ extern "C" {
 #endif
 
 	enum JType {
-		String,
-		Int,
-		Float
+		JType_String,
+		JType_Int,
+		JType_Float
 	};
 
 	class JToken {
 	public:
 		std::string label;
 		std::string rawValue;
+		JType ty;
 		struct JStruct* body = nullptr;
 		MSFL_EXP JToken() {};
+		MSFL_EXP JToken(std::string label, std::string val, JType ty = JType_String) : label(label), rawValue(val), ty(ty) {
+
+		}
 		MSFL_EXP void free();
 	};
 
@@ -40,7 +44,7 @@ extern "C" {
 
 	struct JValue {
 		std::string rawValue;
-		JType type = String;
+		JType type = JType_String;
 		MSFL_EXP JValue(JToken jt);
 		MSFL_EXP JValue() {};
 		//template<typename _Ty> _Ty value();

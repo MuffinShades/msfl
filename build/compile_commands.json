@@ -13,6 +13,12 @@
 },
 {
   "directory": "/Users/jamesweigand/Documents/msfl/build",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/Date.cpp.o -c /Users/jamesweigand/Documents/msfl/src/Date.cpp",
+  "file": "/Users/jamesweigand/Documents/msfl/src/Date.cpp",
+  "output": "CMakeFiles/msfl.dir/src/Date.cpp.o"
+},
+{
+  "directory": "/Users/jamesweigand/Documents/msfl/build",
   "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++   -g -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk -mmacosx-version-min=14.3 -o CMakeFiles/msfl.dir/src/FileWriter.cpp.o -c /Users/jamesweigand/Documents/msfl/src/FileWriter.cpp",
   "file": "/Users/jamesweigand/Documents/msfl/src/FileWriter.cpp",
   "output": "CMakeFiles/msfl.dir/src/FileWriter.cpp.o"

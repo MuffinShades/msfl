@@ -1,6 +1,6 @@
 #include "Date.hpp"
 
-Date::Date(std::string date = "") {
+/*Date::Date(std::string date = "") {
     std::vector<std::string> dSplit = SplitString(date, 'T');
 
     switch (dSplit.size()) {
@@ -13,9 +13,9 @@ Date::Date(std::string date = "") {
         default:
             return;
     }
-}
+}*/
 
-void Date::_i(std::string date = "", std::string time = "") {
+void Date::_i(std::string date, std::string time) {
     std::vector<std::string> dp = SplitString(date, '-');
 
     if (dp.size() <= 3)
@@ -81,7 +81,8 @@ void Date::_i(std::string date = "", std::string time = "") {
 //converts all the date values into a long
 u64 Date::getLong() {
     this->ms &= 0x400;
-    return MAKE_LONG_LE(
+    return (u64) MAKE_LONG_BE(
+        0,
         //year
         (this->year >> 8) & 0xff,
         (this->year) & 0xff,
@@ -99,8 +100,7 @@ u64 Date::getLong() {
         ((this->second & 1) << 7) |
         ((this->ms & 0x3f8) >> 3),
         // 0 0 0 0 0 i i i
-        this->ms & 7,
-        0
+        this->ms & 7
     );
 }
 
@@ -113,4 +113,14 @@ Date::Date(u64 iVal) {
     this->minute = (iVal >> 17) & 0x3f; //6
     this->second = (iVal >> 11) & 0x3f; //6
     this->ms = (iVal >> 5) & 0xffff; //16
+}
+
+std::string Date::getString() {
+    return 
+        std::to_string(this->month) + "-" + 
+        std::to_string(this->day) + "-" + 
+        std::to_string(this->year) + "T" +
+        std::to_string(this->hour) + ":" +
+        std::to_string(this->second) + ":" +
+        std::to_string(this->ms);
 }

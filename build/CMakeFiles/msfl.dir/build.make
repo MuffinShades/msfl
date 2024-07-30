@@ -97,10 +97,24 @@ CMakeFiles/msfl.dir/src/ByteStream.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/msfl.dir/src/ByteStream.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jamesweigand/Documents/msfl/src/ByteStream.cpp -o CMakeFiles/msfl.dir/src/ByteStream.cpp.s
 
+CMakeFiles/msfl.dir/src/Date.cpp.o: CMakeFiles/msfl.dir/flags.make
+CMakeFiles/msfl.dir/src/Date.cpp.o: /Users/jamesweigand/Documents/msfl/src/Date.cpp
+CMakeFiles/msfl.dir/src/Date.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/msfl.dir/src/Date.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/Date.cpp.o -MF CMakeFiles/msfl.dir/src/Date.cpp.o.d -o CMakeFiles/msfl.dir/src/Date.cpp.o -c /Users/jamesweigand/Documents/msfl/src/Date.cpp
+
+CMakeFiles/msfl.dir/src/Date.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/msfl.dir/src/Date.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jamesweigand/Documents/msfl/src/Date.cpp > CMakeFiles/msfl.dir/src/Date.cpp.i
+
+CMakeFiles/msfl.dir/src/Date.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/msfl.dir/src/Date.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jamesweigand/Documents/msfl/src/Date.cpp -o CMakeFiles/msfl.dir/src/Date.cpp.s
+
 CMakeFiles/msfl.dir/src/FileWriter.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/FileWriter.cpp.o: /Users/jamesweigand/Documents/msfl/src/FileWriter.cpp
 CMakeFiles/msfl.dir/src/FileWriter.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/msfl.dir/src/FileWriter.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/msfl.dir/src/FileWriter.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/FileWriter.cpp.o -MF CMakeFiles/msfl.dir/src/FileWriter.cpp.o.d -o CMakeFiles/msfl.dir/src/FileWriter.cpp.o -c /Users/jamesweigand/Documents/msfl/src/FileWriter.cpp
 
 CMakeFiles/msfl.dir/src/FileWriter.cpp.i: cmake_force
@@ -114,7 +128,7 @@ CMakeFiles/msfl.dir/src/FileWriter.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/RawBytes.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/RawBytes.cpp.o: /Users/jamesweigand/Documents/msfl/src/RawBytes.cpp
 CMakeFiles/msfl.dir/src/RawBytes.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/msfl.dir/src/RawBytes.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/msfl.dir/src/RawBytes.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/RawBytes.cpp.o -MF CMakeFiles/msfl.dir/src/RawBytes.cpp.o.d -o CMakeFiles/msfl.dir/src/RawBytes.cpp.o -c /Users/jamesweigand/Documents/msfl/src/RawBytes.cpp
 
 CMakeFiles/msfl.dir/src/RawBytes.cpp.i: cmake_force
@@ -128,7 +142,7 @@ CMakeFiles/msfl.dir/src/RawBytes.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/asset.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/asset.cpp.o: /Users/jamesweigand/Documents/msfl/src/asset.cpp
 CMakeFiles/msfl.dir/src/asset.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/msfl.dir/src/asset.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/msfl.dir/src/asset.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/asset.cpp.o -MF CMakeFiles/msfl.dir/src/asset.cpp.o.d -o CMakeFiles/msfl.dir/src/asset.cpp.o -c /Users/jamesweigand/Documents/msfl/src/asset.cpp
 
 CMakeFiles/msfl.dir/src/asset.cpp.i: cmake_force
@@ -142,7 +156,7 @@ CMakeFiles/msfl.dir/src/asset.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/balloon.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/balloon.cpp.o: /Users/jamesweigand/Documents/msfl/src/balloon.cpp
 CMakeFiles/msfl.dir/src/balloon.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/msfl.dir/src/balloon.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/msfl.dir/src/balloon.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/balloon.cpp.o -MF CMakeFiles/msfl.dir/src/balloon.cpp.o.d -o CMakeFiles/msfl.dir/src/balloon.cpp.o -c /Users/jamesweigand/Documents/msfl/src/balloon.cpp
 
 CMakeFiles/msfl.dir/src/balloon.cpp.i: cmake_force
@@ -156,7 +170,7 @@ CMakeFiles/msfl.dir/src/balloon.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/bitmap.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/bitmap.cpp.o: /Users/jamesweigand/Documents/msfl/src/bitmap.cpp
 CMakeFiles/msfl.dir/src/bitmap.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/msfl.dir/src/bitmap.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/msfl.dir/src/bitmap.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/bitmap.cpp.o -MF CMakeFiles/msfl.dir/src/bitmap.cpp.o.d -o CMakeFiles/msfl.dir/src/bitmap.cpp.o -c /Users/jamesweigand/Documents/msfl/src/bitmap.cpp
 
 CMakeFiles/msfl.dir/src/bitmap.cpp.i: cmake_force
@@ -170,7 +184,7 @@ CMakeFiles/msfl.dir/src/bitmap.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/bitmapRender.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/bitmapRender.cpp.o: /Users/jamesweigand/Documents/msfl/src/bitmapRender.cpp
 CMakeFiles/msfl.dir/src/bitmapRender.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/msfl.dir/src/bitmapRender.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/msfl.dir/src/bitmapRender.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/bitmapRender.cpp.o -MF CMakeFiles/msfl.dir/src/bitmapRender.cpp.o.d -o CMakeFiles/msfl.dir/src/bitmapRender.cpp.o -c /Users/jamesweigand/Documents/msfl/src/bitmapRender.cpp
 
 CMakeFiles/msfl.dir/src/bitmapRender.cpp.i: cmake_force
@@ -184,7 +198,7 @@ CMakeFiles/msfl.dir/src/bitmapRender.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/cfgParse.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/cfgParse.cpp.o: /Users/jamesweigand/Documents/msfl/src/cfgParse.cpp
 CMakeFiles/msfl.dir/src/cfgParse.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/msfl.dir/src/cfgParse.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/msfl.dir/src/cfgParse.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/cfgParse.cpp.o -MF CMakeFiles/msfl.dir/src/cfgParse.cpp.o.d -o CMakeFiles/msfl.dir/src/cfgParse.cpp.o -c /Users/jamesweigand/Documents/msfl/src/cfgParse.cpp
 
 CMakeFiles/msfl.dir/src/cfgParse.cpp.i: cmake_force
@@ -198,7 +212,7 @@ CMakeFiles/msfl.dir/src/cfgParse.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/jparse.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/jparse.cpp.o: /Users/jamesweigand/Documents/msfl/src/jparse.cpp
 CMakeFiles/msfl.dir/src/jparse.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/msfl.dir/src/jparse.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/msfl.dir/src/jparse.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/jparse.cpp.o -MF CMakeFiles/msfl.dir/src/jparse.cpp.o.d -o CMakeFiles/msfl.dir/src/jparse.cpp.o -c /Users/jamesweigand/Documents/msfl/src/jparse.cpp
 
 CMakeFiles/msfl.dir/src/jparse.cpp.i: cmake_force
@@ -212,7 +226,7 @@ CMakeFiles/msfl.dir/src/jparse.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/main.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/main.cpp.o: /Users/jamesweigand/Documents/msfl/src/main.cpp
 CMakeFiles/msfl.dir/src/main.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/msfl.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/msfl.dir/src/main.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/main.cpp.o -MF CMakeFiles/msfl.dir/src/main.cpp.o.d -o CMakeFiles/msfl.dir/src/main.cpp.o -c /Users/jamesweigand/Documents/msfl/src/main.cpp
 
 CMakeFiles/msfl.dir/src/main.cpp.i: cmake_force
@@ -226,7 +240,7 @@ CMakeFiles/msfl.dir/src/main.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/pak.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/pak.cpp.o: /Users/jamesweigand/Documents/msfl/src/pak.cpp
 CMakeFiles/msfl.dir/src/pak.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/msfl.dir/src/pak.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/msfl.dir/src/pak.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/pak.cpp.o -MF CMakeFiles/msfl.dir/src/pak.cpp.o.d -o CMakeFiles/msfl.dir/src/pak.cpp.o -c /Users/jamesweigand/Documents/msfl/src/pak.cpp
 
 CMakeFiles/msfl.dir/src/pak.cpp.i: cmake_force
@@ -240,7 +254,7 @@ CMakeFiles/msfl.dir/src/pak.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/png.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/png.cpp.o: /Users/jamesweigand/Documents/msfl/src/png.cpp
 CMakeFiles/msfl.dir/src/png.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/msfl.dir/src/png.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/msfl.dir/src/png.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/png.cpp.o -MF CMakeFiles/msfl.dir/src/png.cpp.o.d -o CMakeFiles/msfl.dir/src/png.cpp.o -c /Users/jamesweigand/Documents/msfl/src/png.cpp
 
 CMakeFiles/msfl.dir/src/png.cpp.i: cmake_force
@@ -254,7 +268,7 @@ CMakeFiles/msfl.dir/src/png.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/ttf.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/ttf.cpp.o: /Users/jamesweigand/Documents/msfl/src/ttf.cpp
 CMakeFiles/msfl.dir/src/ttf.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/msfl.dir/src/ttf.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/msfl.dir/src/ttf.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/ttf.cpp.o -MF CMakeFiles/msfl.dir/src/ttf.cpp.o.d -o CMakeFiles/msfl.dir/src/ttf.cpp.o -c /Users/jamesweigand/Documents/msfl/src/ttf.cpp
 
 CMakeFiles/msfl.dir/src/ttf.cpp.i: cmake_force
@@ -268,7 +282,7 @@ CMakeFiles/msfl.dir/src/ttf.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/ttfRender.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/ttfRender.cpp.o: /Users/jamesweigand/Documents/msfl/src/ttfRender.cpp
 CMakeFiles/msfl.dir/src/ttfRender.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/msfl.dir/src/ttfRender.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/msfl.dir/src/ttfRender.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/ttfRender.cpp.o -MF CMakeFiles/msfl.dir/src/ttfRender.cpp.o.d -o CMakeFiles/msfl.dir/src/ttfRender.cpp.o -c /Users/jamesweigand/Documents/msfl/src/ttfRender.cpp
 
 CMakeFiles/msfl.dir/src/ttfRender.cpp.i: cmake_force
@@ -282,7 +296,7 @@ CMakeFiles/msfl.dir/src/ttfRender.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/xml.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/xml.cpp.o: /Users/jamesweigand/Documents/msfl/src/xml.cpp
 CMakeFiles/msfl.dir/src/xml.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/msfl.dir/src/xml.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/msfl.dir/src/xml.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/xml.cpp.o -MF CMakeFiles/msfl.dir/src/xml.cpp.o.d -o CMakeFiles/msfl.dir/src/xml.cpp.o -c /Users/jamesweigand/Documents/msfl/src/xml.cpp
 
 CMakeFiles/msfl.dir/src/xml.cpp.i: cmake_force
@@ -296,7 +310,7 @@ CMakeFiles/msfl.dir/src/xml.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/yaml.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/yaml.cpp.o: /Users/jamesweigand/Documents/msfl/src/yaml.cpp
 CMakeFiles/msfl.dir/src/yaml.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/msfl.dir/src/yaml.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/msfl.dir/src/yaml.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/yaml.cpp.o -MF CMakeFiles/msfl.dir/src/yaml.cpp.o.d -o CMakeFiles/msfl.dir/src/yaml.cpp.o -c /Users/jamesweigand/Documents/msfl/src/yaml.cpp
 
 CMakeFiles/msfl.dir/src/yaml.cpp.i: cmake_force
@@ -310,7 +324,7 @@ CMakeFiles/msfl.dir/src/yaml.cpp.s: cmake_force
 CMakeFiles/msfl.dir/src/zip.cpp.o: CMakeFiles/msfl.dir/flags.make
 CMakeFiles/msfl.dir/src/zip.cpp.o: /Users/jamesweigand/Documents/msfl/src/zip.cpp
 CMakeFiles/msfl.dir/src/zip.cpp.o: CMakeFiles/msfl.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/msfl.dir/src/zip.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/msfl.dir/src/zip.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/msfl.dir/src/zip.cpp.o -MF CMakeFiles/msfl.dir/src/zip.cpp.o.d -o CMakeFiles/msfl.dir/src/zip.cpp.o -c /Users/jamesweigand/Documents/msfl/src/zip.cpp
 
 CMakeFiles/msfl.dir/src/zip.cpp.i: cmake_force
@@ -325,6 +339,7 @@ CMakeFiles/msfl.dir/src/zip.cpp.s: cmake_force
 msfl_OBJECTS = \
 "CMakeFiles/msfl.dir/src/BinUtility.cpp.o" \
 "CMakeFiles/msfl.dir/src/ByteStream.cpp.o" \
+"CMakeFiles/msfl.dir/src/Date.cpp.o" \
 "CMakeFiles/msfl.dir/src/FileWriter.cpp.o" \
 "CMakeFiles/msfl.dir/src/RawBytes.cpp.o" \
 "CMakeFiles/msfl.dir/src/asset.cpp.o" \
@@ -347,6 +362,7 @@ msfl_EXTERNAL_OBJECTS =
 
 msfl: CMakeFiles/msfl.dir/src/BinUtility.cpp.o
 msfl: CMakeFiles/msfl.dir/src/ByteStream.cpp.o
+msfl: CMakeFiles/msfl.dir/src/Date.cpp.o
 msfl: CMakeFiles/msfl.dir/src/FileWriter.cpp.o
 msfl: CMakeFiles/msfl.dir/src/RawBytes.cpp.o
 msfl: CMakeFiles/msfl.dir/src/asset.cpp.o
@@ -365,7 +381,7 @@ msfl: CMakeFiles/msfl.dir/src/yaml.cpp.o
 msfl: CMakeFiles/msfl.dir/src/zip.cpp.o
 msfl: CMakeFiles/msfl.dir/build.make
 msfl: CMakeFiles/msfl.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Linking CXX executable msfl"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/jamesweigand/Documents/msfl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Linking CXX executable msfl"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/msfl.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

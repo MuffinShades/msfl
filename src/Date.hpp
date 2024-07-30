@@ -8,10 +8,11 @@ private:
 public:
     i16 year = 0, ms = 0;
     byte day = 0, month = 0, hour = 0, minute = 0, second = 0;
-    Date(std::string date = "");
-    Date(std::string date = "", std::string time = "") {
+    Date(std::string date, std::string time = "") {
         this->_i(date, time);
     } 
     Date(u64 iVal);
+    Date(){};
     u64 getLong();
+    std::string getString();
 };

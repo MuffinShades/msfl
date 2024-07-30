@@ -1,0 +1,1 @@
+TODO: make sure when a JStruct desconstructs it deletes everything it needs to

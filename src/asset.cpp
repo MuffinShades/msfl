@@ -1,4 +1,15 @@
 #include "asset.hpp"
+/**
+ * 
+ * Asset File Format v 1.0.0
+ * 
+ * Written by muffinshades, Copyright muffinshades 2024 
+ * All Rights Reserved
+ * 
+ * This is the encoder, decoder, and utility functions for
+ * the Asset / AssetPack format. 
+ * 
+ */
 
 const std::string _asset_errs[] = {
     "Invalid path length",
@@ -160,6 +171,41 @@ void AssetStruct::AddAsset(std::string path, byte *data, size_t sz) {
     );
 }
 
+//add asset based on AssetDescriptor
+void AssetStruct::AddAsset(std::string path, AssetDescriptor desc) {
+    if (path.length() <= 0) //data check
+        return;
+
+    std::vector<std::string> route = _splitString(path, '.');
+
+    //now traverse path and create containers when needed
+    AssetContainer *current = this->map;
+
+    if (!this->map)
+        this->map = new AssetContainer("root");
+    
+    for (auto& nId : route) {
+        if (nId.length() <= 0) return; //INVALID LENGTH
+        AssetContainer *nxt = nullptr;
+        //first check for container
+        if ((nxt = current->GetNode(nId)) != nullptr)
+            current = nxt;
+        else
+            current = current->AddContainer(nId);
+    }
+
+    if (current == nullptr)
+        return;
+
+    current->SetAssetData(
+        {
+            .inf = desc,
+            .bytes = nullptr,
+            .sz = 0
+        }
+    );
+}
+
 //add file asset struct thing
 void AssetStruct::AddAsset(std::string path, std::string src) {
     if (src.length() <= 0 || path.length() <= 0)
@@ -192,6 +238,23 @@ void AssetContainer::AddAsset(std::string id, byte *data, size_t sz) {
     AssetContainer *item = this->AddContainer(id);
     item->SetAssetData(
         construct_asset(data, sz)
+    );
+}
+
+//adds asset based on asset descriptor
+void AssetContainer::AddAsset(std::string id, AssetDescriptor desc) {
+    for (auto* n : this->assets) {
+        if (n->id == id)
+            return;
+    }
+
+    AssetContainer *item = this->AddContainer(id);
+    item->SetAssetData(
+        {
+            .inf = desc,
+            .bytes = nullptr,
+            .sz = 0
+        }
     );
 }
 
@@ -264,6 +327,26 @@ const int construct_FINFO(bool encryption, bool streamable, int compressionType)
         ((int) encryption & 1);
 }
 
+void write_f_string(ByteStream *stream, std::string str) {
+    size_t fTypeSz = str.length();
+
+    if (fTypeSz > 0xff)
+        fTypeSz = 0;
+
+    stream->writeByte(fTypeSz);
+
+    if (fTypeSz > 0)
+        stream->writeBytes(
+            reinterpret_cast<byte*>(
+                const_cast<char*>(
+                    str.c_str()
+                )
+            ),
+
+            fTypeSz
+        );
+}
+
 //TODO: create this function to write assets
 fPos write_asset(AssetContainer *container, ByteStream *stream) {
     ByteStream aStream;
@@ -287,7 +370,7 @@ fPos write_asset(AssetContainer *container, ByteStream *stream) {
     byte *compressedBytes = nullptr;
     size_t compressedSz = 0;
 
-    switch (aData->compressionType) {
+    switch (aData->inf.compressionType) {
         case 0: { //no compression
             compressedBytes = new byte[aData->sz];
             memcpy(compressedBytes, aData->bytes, aData->sz);
@@ -300,7 +383,7 @@ fPos write_asset(AssetContainer *container, ByteStream *stream) {
                 uBytes,
                 aData->sz,
                 15,
-                aData->compressionType
+                aData->inf.compressionType
             );
             delete[] uBytes;
             compressedBytes = ptrconverter::convertTo<u32, byte>(zrs.bytes, zrs.len);
@@ -316,8 +399,18 @@ fPos write_asset(AssetContainer *container, ByteStream *stream) {
     aStream.writeUInt32(compressedSz);
     aStream.writeUInt32(aData->sz);
 
+    //write file descriptor
+    aStream.writeUInt64(aData->inf.created.getLong());
+    aStream.writeUInt64(aData->inf.modified.getLong());
+
+    //write file type
+    write_f_string(&aStream, aData->inf.fileType);
+
+    //write fname
+    write_f_string(&aStream, aData->inf.fname);
+
     //finfo
-    const byte F_INFO = construct_FINFO(false, false, aData->compressionType); //TODO: add encryption and streamability
+    const byte F_INFO = construct_FINFO(false, false, aData->inf.compressionType); //TODO: add encryption and streamability
 
     aStream.writeByte(F_INFO);
 
@@ -437,11 +530,9 @@ fPos write_container(AssetContainer *container, ByteStream *stream) {
         .error_code = 0
     };
 
-    std::cout << "WRITING STREAM: " << cStream.getSize() << std::endl;
-
     //write chunk
     write_chunk(_cty_Container, &cStream, stream);
-    //cStream.free();
+    cStream.free();
 
     //return yk
     return res;
@@ -482,8 +573,7 @@ Asset _make_err_asset(int err_code) {
 }
 
 Asset _make_null_asset() {
-    Asset res;
-    return res;
+    return {};
 }
 
 Asset AssetStruct::GetAsset(std::string path) {
@@ -544,6 +634,61 @@ void _jfItr(std::vector<_jAsset>* _toAdd, JStruct currentStruct, std::string cPa
                 .src = tok.rawValue
             });
     }
+}
+
+/**
+ * 
+ * read_descriptor
+ * 
+ * reads asset descriptor from stream
+ * AssetDescriptor:
+ *  
+ * 
+ */
+
+//File:
+//
+// asset id len
+// asset id
+// data size
+// created
+// modified
+// ftypelen
+// ftype
+// fInfo
+// data
+AssetDescriptor read_descriptor(ByteStream *stream) {
+    if (stream == nullptr)
+        return {};
+
+    const size_t idLen = stream->readByte();
+    if (idLen <= 0) return {}; //nothing there ;-;
+
+    std::string aId = stream->readStr(idLen);
+
+    //read in date things
+    u64 creLong = stream->readUInt64(), modLong = stream->readUInt64();
+
+    //file type
+    const size_t ftl = stream->readByte();
+    std::string fType = "";
+    if (ftl > 0)
+        fType = stream->readStr(ftl);
+
+    //file name
+    const size_t fnl = stream->readByte();
+    std::string fName = "";
+    if (fnl > 0)
+        fName = stream->readStr(fnl);
+
+    //construct result
+    return {
+        .created = Date(creLong),
+        .modified = Date(modLong),
+        .fileType = fType,
+        .fname = fName,
+        .aId = aId
+    };
 }
 
 /**
@@ -621,15 +766,6 @@ _AssetHeader read_header(ByteStream *stream) {
     return _h;
 }
 
-
-//File:
-//
-// asset id len
-// asset id
-// data size
-// fInfo
-// data
-
 //Asset:
 //
 // container label len
@@ -658,7 +794,6 @@ iErrorWrap<_fChunk> read_chunk(ByteStream *stream) {
     if (ll <= 0)
         return iErrorWrap<_fChunk>(res, iErrorWrap<i32>::CreateGenericError(1, ""));
 
-
     //get chunk type
     std::string chunkLbl = stream->readStr(ll);
 
@@ -684,7 +819,8 @@ void map_file(ByteStream *stream, AssetStruct *s, std::string path = "") {
     switch (tChunk.ty) {
         //asset mapping
         case _cty_Asset: {
-            
+            AssetDescriptor desc = read_descriptor(stream);
+            s->AddAsset(path + desc.aId, desc);
             break;
         }
         //asset container mapping
@@ -707,12 +843,46 @@ void map_file(ByteStream *stream, AssetStruct *s, std::string path = "") {
                     stream->seek(r_pos);
                 }
             else
-                s->AddAsset(path, ""); //add null asset or branch with no fruit
+                s->AddAsset(path.substr(0, path.length() - 1), ""); //add null asset or branch with no fruit
             break;
         }
         default:
             return; //invalid chunk
     }
+}
+
+JStruct *adesc_to_jstruct(AssetDescriptor desc) {
+    JStruct *res = new JStruct();
+
+    res->body.push_back(JToken("fileType", desc.fileType));
+    res->body.push_back(JToken("assetId", desc.aId));
+    res->body.push_back(JToken("compressionType", std::to_string(desc.compressionType), JType_Int));
+    res->body.push_back(JToken("created", desc.created.getString()));
+    res->body.push_back(JToken("modified", desc.modified.getString()));
+    res->body.push_back(JToken("fileName", desc.fname));
+
+    return res;
+}
+
+void astruct_to_jstruct(AssetContainer *node, JStruct *o) {
+    if (node == nullptr || o == nullptr) return;
+
+    for (auto* c : node->assets)
+        if (c->getType() != _aTypeAsset) {
+            JToken nTok = JToken();
+            nTok.body = new JStruct();
+            nTok.label = c->GetId();
+            o->body.push_back(nTok);
+            astruct_to_jstruct(c, nTok.body); //go to next node
+        } else {
+            JToken nTok = JToken();
+            nTok.label = c->GetId();
+            
+            //convert
+            nTok.body = adesc_to_jstruct(c->GetAssetData()->inf);
+
+            o->body.push_back(nTok);
+        }
 }
 
 JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
@@ -731,6 +901,9 @@ JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
     map_file(&stream, &intStruct);
 
     //convert asset struct to JStruct
+    AssetContainer *root = intStruct.GetRoot();
+    if (root == nullptr) return res;
+    astruct_to_jstruct(root, &res);
 
     return res;
 }

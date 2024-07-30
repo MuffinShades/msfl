@@ -40,12 +40,12 @@ private:
     std::vector<ErrorDescriptor*> genericErrs;
 public:
     _Ty v;
-    iErrorWrap(_Ty v, ErrorDescriptor* err = nullptr) : v(v) : err(err) {};
+    iErrorWrap(_Ty v, ErrorDescriptor* err = nullptr) : v(v), err(err) {};
     struct ErrorDescriptor* err;
-    _Ty operator _Ty() {
+    operator _Ty() const {
         return this->v;
     }
-    bool err() {
+    bool error() {
         if (this->err != nullptr)
             return this->err->code == 0;
         else
@@ -115,3 +115,11 @@ static inline std::vector<std::string> SplitString(std::string str, const char d
 #define MAKE_SHORT_LE(b0, b1) \
     ((b1) <<  8) | \
     ((b0) <<  0)
+
+static inline u64 modifyByte(u64 val, i32 b, byte v) {
+    u64 mask = ((1 << (sizeof(u64) << 3)) - 1);
+    b <<= 3;
+    mask ^= 0xff << b;
+    val &= mask;
+    return val | (v << b);
+}

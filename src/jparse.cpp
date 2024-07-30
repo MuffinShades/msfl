@@ -120,12 +120,12 @@ JValue::JValue(JToken jt) {
 
 	auto _gType = [](std::string str) {
 		std::string nChars = "0123456789.";
-		JType _mode = Int;
+		JType _mode = JType_Int;
 		for (const char _C : str) {
 			if (nChars.find(_C) == std::string::npos)
-				return String;
+				return JType_String;
 			if (_C == '.')
-				_mode = Float;
+				_mode = JType_Float;
 		}
 
 		return _mode;
@@ -275,12 +275,12 @@ void jparse::genTok(const char* rStr, JToken& tok) {
 
 enum JType _gType(std::string str) {
 	std::string nChars = "0123456789.";
-	JType _mode = Int;
+	JType _mode = JType_Int;
 	for (const char _C : str) {
 		if (nChars.find(_C) == std::string::npos)
-			return String;
+			return JType_String;
 		if (_C == '.')
-			_mode = Float;
+			_mode = JType_Float;
 	}
 
 	return _mode;
@@ -294,7 +294,7 @@ std::string jparse::GenerateString(JStruct json, bool min, std::string tab) {
 		for (int i = 0; i < json.body.size(); i++) {
 			if (json.body[i].body == nullptr) {
 				std::string val = json.body[i].rawValue;
-				if (_gType(json.body[i].rawValue) == String)
+				if (json.body[i].ty == JType_String)
 					val = "\"" + val + "\"";
 				rStr += "\"" + json.body[i].label + "\":" + val + (i < json.body.size() - 1 ? "," : "");
 			}
@@ -311,7 +311,7 @@ std::string jparse::GenerateString(JStruct json, bool min, std::string tab) {
 		for (int i = 0; i < json.body.size(); i++) {
 			if (json.body[i].body == nullptr) {
 				std::string val = json.body[i].rawValue;
-				if (_gType(json.body[i].rawValue) == String)
+				if (json.body[i].ty == JType_String)
 					val = "\"" + val + "\"";
 				rStr += val + (i < json.body.size() - 1 ? "," : "");
 			}

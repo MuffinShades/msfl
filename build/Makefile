@@ -551,6 +551,30 @@ src/ByteStream.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/msfl.dir/build.make CMakeFiles/msfl.dir/src/ByteStream.cpp.s
 .PHONY : src/ByteStream.cpp.s
 
+src/Date.o: src/Date.cpp.o
+.PHONY : src/Date.o
+
+# target to build an object file
+src/Date.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/msfl.dir/build.make CMakeFiles/msfl.dir/src/Date.cpp.o
+.PHONY : src/Date.cpp.o
+
+src/Date.i: src/Date.cpp.i
+.PHONY : src/Date.i
+
+# target to preprocess a source file
+src/Date.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/msfl.dir/build.make CMakeFiles/msfl.dir/src/Date.cpp.i
+.PHONY : src/Date.cpp.i
+
+src/Date.s: src/Date.cpp.s
+.PHONY : src/Date.s
+
+# target to generate assembly for a file
+src/Date.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/msfl.dir/build.make CMakeFiles/msfl.dir/src/Date.cpp.s
+.PHONY : src/Date.cpp.s
+
 src/FileWriter.o: src/FileWriter.cpp.o
 .PHONY : src/FileWriter.o
 
@@ -979,6 +1003,9 @@ help:
 	@echo "... src/ByteStream.o"
 	@echo "... src/ByteStream.i"
 	@echo "... src/ByteStream.s"
+	@echo "... src/Date.o"
+	@echo "... src/Date.i"
+	@echo "... src/Date.s"
 	@echo "... src/FileWriter.o"
 	@echo "... src/FileWriter.i"
 	@echo "... src/FileWriter.s"

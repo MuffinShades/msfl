@@ -20,17 +20,19 @@
 #include "Date.hpp"
 
 struct AssetDescriptor {
-    size_t sz;
-    std::string fileType;
+    size_t sz = 0;
+    std::string fileType = "";
     Date created;
     Date modified;
+    std::string fname = "";
+    int compressionType = 2;
+    std::string aId = "";
 };
 
 struct Asset {
-    std::string fname;
+    AssetDescriptor inf;
     size_t sz;
     byte *bytes;
-    int compressionType = 2;
 };
 
 enum _aContainerType {
@@ -53,6 +55,7 @@ public:
     void SetAssetData(Asset a);
     void AddAsset(std::string id, byte *data, size_t sz);
     void AddAsset(std::string id, std::string fSrc);
+    void AddAsset(std::string id, AssetDescriptor desc);
     AssetContainer *AddContainer(std::string id);
     void SetId(std::string id);
     std::string GetId();
@@ -81,8 +84,10 @@ public:
         this->map = new AssetContainer("root");
     };
     ~AssetStruct(){
-        //if (this->map != nullptr)
-           // delete this->map;
+        if (this->map != nullptr) {
+           delete this->map;
+           this->map = nullptr;
+        }
     };
 };
 

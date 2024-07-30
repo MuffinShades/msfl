@@ -75,3 +75,43 @@ static inline std::vector<std::string> SplitString(std::string str, const char d
 
     return res;
 }
+
+#define MAKE_LONG_BE(b0, b1, b2, b3, b4, b5, b6, b7) \
+    ((b0) << 56) | \
+    ((b1) << 48) | \
+    ((b2) << 40) | \
+    ((b3) << 32) | \
+    ((b4) << 24) | \
+    ((b5) << 16) | \
+    ((b6) <<  8) | \
+    ((b7) <<  0)
+
+#define MAKE_LONG_LE(b0, b1, b2, b3, b4, b5, b6, b7) \
+    ((b7) << 56) | \
+    ((b6) << 48) | \
+    ((b5) << 40) | \
+    ((b4) << 32) | \
+    ((b3) << 24) | \
+    ((b2) << 16) | \
+    ((b1) <<  8) | \
+    ((b0) <<  0)
+
+#define MAKE_INT_BE(b0, b1, b2, b3) \
+    ((b0) << 24) | \
+    ((b1) << 16) | \
+    ((b2) <<  8) | \
+    ((b3) <<  0)
+
+#define MAKE_INT_LE(b0, b1, b2, b3) \
+    ((b3) << 24) | \
+    ((b2) << 16) | \
+    ((b1) <<  8) | \
+    ((b0) <<  0)
+
+#define MAKE_SHORT_BE(b0, b1) \
+    ((b0) <<  8) | \
+    ((b1) <<  0)
+
+#define MAKE_SHORT_LE(b0, b1) \
+    ((b1) <<  8) | \
+    ((b0) <<  0)

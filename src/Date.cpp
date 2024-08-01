@@ -124,3 +124,71 @@ std::string Date::getString() {
         std::to_string(this->second) + ":" +
         std::to_string(this->ms);
 }
+
+const i32 monthDays[] = {
+    31, 
+    28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31
+};
+
+//dont use
+void SetMonthDay(Date *d, i32 yDay) {
+    if (d == nullptr) return;
+
+    bool leapYear = d->year != 0 && d->year % 4 == 0;
+
+    size_t curMonth = 0;
+    d->day = 1;
+
+    i32 *md = const_cast<i32*>(monthDays);
+
+    if (leapYear)
+        *(md + 1) = 29; //29 days in february
+
+    while (yDay--) {
+        d->day++;
+
+        if (leapYear)
+
+        if (d->day == monthDays[curMonth]) {
+            curMonth++;
+            d->day = 1;
+        }
+    }
+}
+
+Date::Date(time_t t) {
+    /*long tl = (long) t;
+    const long ys = 0x1e13380, ds = 0x15180, hs = 0xe10, ms = 0x3c;
+
+    this->year = 1970 + tl / ys;
+    tl -= (this->year - 1970) * ys;
+
+    i32 yearDay = tl / ds;
+    tl -= yearDay * ds;
+
+    //convert year day into month and day*/
+
+
+    //just use C function for this job yk
+    struct tm *_t = gmtime((const time_t *) &t);
+
+    if (_t == nullptr)
+        return;
+
+    this->year = _t->tm_year;
+    this->month = _t->tm_mon;
+    this->day = _t->tm_mday;
+    this->minute = _t->tm_min;
+    this->hour = _t->tm_hour;
+    this->second = _t->tm_sec;
+}

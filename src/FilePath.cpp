@@ -62,5 +62,7 @@ FileInfo FilePath_int::getFileInfo(std::string path) {
         //get creation times and stuff
         auto mDate = r.st_mtime,
              cDate = r.st_ctime;
+
+        //convert times into dates
     }
 }

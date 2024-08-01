@@ -12,6 +12,7 @@ public:
         this->_i(date, time);
     } 
     Date(u64 iVal);
+    Date(time_t t);
     Date(){};
     u64 getLong();
     std::string getString();

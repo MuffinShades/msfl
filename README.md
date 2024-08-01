@@ -56,6 +56,10 @@ Deflate and Inflate for decoding png, zip, and other compressed formats
 
 # This library will also include the following library functions:
 
+
+
+# This library is currently 9,086 lines of code (6,096 not including blank lines and comments)
+
 zlib -> Inflate and Deflate
 .db
 .zip

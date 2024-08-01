@@ -54,6 +54,7 @@ public:
     size_t nAssets = 0; //denotes how many assets are going to be in the next container
     size_t rootOffset = 0; //offset of the root container
     Version fVersion = Version(1, 0, 1); //file version
+    size_t locOffset = 0;
     _AssetHeader(){}
 };
 
@@ -551,7 +552,7 @@ int AssetParse::WriteToFile(std::string src, AssetStruct *dat) {
 
     //now write the root to the data stream
     fPos rootPos = write_container(dat->GetRoot(), &datStream);
-    oStream.writeUInt32(rootPos.pos + oStream.getSize()); //write position of root for streaming capability
+    oStream.writeUInt32(rootPos.pos + oStream.getSize() + sizeof(u32)); //write position of root for streaming capability
 
     //write le data stream
     oStream.writeBytes(datStream.getBytePtr(), datStream.getSize());
@@ -715,6 +716,7 @@ i32 AssetParse::WriteToFile(std::string src, std::string jsonMap) {
     //add elements and their path
     for (_jAsset& aTarget : _toAdd) {
         std::string path = aTarget.path.substr(0, aTarget.path.length() - 1);
+        std::cout << "[719] ASSET PATH: " << path << " "  << aTarget.src << std::endl;
         fStruct.AddAsset(path, aTarget.src);
     }
 
@@ -760,8 +762,14 @@ _AssetHeader read_header(ByteStream *stream) {
     _h.fVersion = Version(
         (fVersion >> 32) & _vMask,
         (fVersion >> 16) & _vMask,
-        (fVersion >> 00) & _vMask
+        (fVersion >>  0) & _vMask
     );
+
+    //get important offsets for stuff
+    _h.rootOffset = stream->readUInt32();
+    _h.locOffset = stream->tell();
+
+    std::cout << "[772] Asset File V: " << _h.fVersion.mainVersion << "." << _h.fVersion.subVersion << "." << _h.fVersion.protoVersion << std::endl;
 
     return _h;
 }
@@ -796,6 +804,9 @@ iErrorWrap<_fChunk> read_chunk(ByteStream *stream) {
 
     //get chunk type
     std::string chunkLbl = stream->readStr(ll);
+    std::cout << "label len: " << ll << std::endl;
+
+    std::cout << "[808] Found Chunk: " << chunkLbl << std::endl;
 
     for (size_t i = 0; i < _cty_max; i++) 
         if (chunkLbl == chunkTypeStrs[i]) {
@@ -813,33 +824,43 @@ iErrorWrap<_fChunk> read_chunk(ByteStream *stream) {
     return iErrorWrap<_fChunk>(res, nullptr);
 }
 
-void map_file(ByteStream *stream, AssetStruct *s, std::string path = "") {
+void map_file(ByteStream *stream, _AssetHeader _h, AssetStruct *s, std::string path = "") {
     _fChunk tChunk = read_chunk(stream);
-
     switch (tChunk.ty) {
         //asset mapping
         case _cty_Asset: {
             AssetDescriptor desc = read_descriptor(stream);
+
+#ifdef MSFL_ASSET_DEBUG
+            std::cout << "[834] Asset Description: " 
+            << "\n\t" << "aId: " << desc.aId 
+            << "\n\t" << "compressionType: " << desc.compressionType
+            << "\n\t" << "Creation: " << desc.created.getString()
+            << "\n\t" << "Modified: " << desc.modified.getString()
+            << "\n\t" << "File Type: " << desc.fileType
+            << "\n\t" << "File Name: " << desc.fname
+            << std::endl;
+#endif
+
             s->AddAsset(path + desc.aId, desc);
             break;
         }
         //asset container mapping
         case _cty_Container: {
+            size_t nc = stream->readUInt16();
             const size_t n_len = stream->readByte();
             if (n_len <= 0) return;
             const std::string n = stream->readStr(n_len);
             path += (n + ".");
-            size_t nc = stream->readUInt32();
             if (nc > 0)
                 while (nc--) {
-                    size_t an_len = stream->readByte(), o_len;
+                    size_t an_len = stream->readByte(), o_len; // -> 617
                     if (an_len <= 0) continue;
-                    stream->skipBytes(an_len);
-                    o_len = stream->readByte();
-                    if (o_len <= 0) continue;
-                    const size_t off = stream->readBytesAsVal(o_len),
+                    std::string iId = stream->readStr(an_len); // -> 618
+                    o_len = stream->readByte(); // -> 619
+                    const size_t off = (unsigned) stream->readBytesAsVal(o_len) + _h.locOffset,
                                  r_pos = stream->seek(off);
-                    map_file(stream, s, path);
+                    map_file(stream, _h, s, path);
                     stream->seek(r_pos);
                 }
             else
@@ -867,7 +888,8 @@ JStruct *adesc_to_jstruct(AssetDescriptor desc) {
 void astruct_to_jstruct(AssetContainer *node, JStruct *o) {
     if (node == nullptr || o == nullptr) return;
 
-    for (auto* c : node->assets)
+    for (auto* c : node->assets) {
+        std::cout << "[896] BANANA" << std::endl;
         if (c->getType() != _aTypeAsset) {
             JToken nTok = JToken();
             nTok.body = new JStruct();
@@ -883,6 +905,7 @@ void astruct_to_jstruct(AssetContainer *node, JStruct *o) {
 
             o->body.push_back(nTok);
         }
+    }
 }
 
 JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
@@ -892,13 +915,13 @@ JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
     _AssetHeader fHeader = read_header(&stream);
 
     //get position of root node
-    const size_t rootPos = stream.readUInt32();
+    const size_t rootPos = fHeader.rootOffset;
     stream.seek(rootPos);
 
     JStruct res;
 
     AssetStruct intStruct;
-    map_file(&stream, &intStruct);
+    map_file(&stream, fHeader, &intStruct);
 
     //convert asset struct to JStruct
     AssetContainer *root = intStruct.GetRoot();
@@ -906,4 +929,24 @@ JStruct AssetParse::ReadFileMapAsJson(byte *dat, size_t sz) {
     astruct_to_jstruct(root, &res);
 
     return res;
+}
+
+JStruct AssetParse::ReadFileMapAsJson(std::string src) {
+    if (src.length() <= 0)
+        return {};
+
+    //get file contents
+    arr_container<byte> fDat = FileWriter::ReadBytesFromBinFile(src);
+
+    if (fDat.dat == nullptr || fDat.sz <= 0) {
+        if (fDat.dat != nullptr)
+            delete[] fDat.dat;
+
+        return {};
+    }
+
+    JStruct s = AssetParse::ReadFileMapAsJson(fDat.dat, fDat.sz);
+    delete[] fDat.dat;
+
+    return s;
 }

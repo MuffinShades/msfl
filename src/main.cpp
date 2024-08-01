@@ -131,6 +131,17 @@ int main() {
 
 	delete[] assetMapBytes.dat;
 
+	//assset test thing
+	std::cout << "-- Map Testing --" << std::endl;
+	JStruct aMap = AssetParse::ReadFileMapAsJson("/Users/jamesweigand/Desktop/testingFolder/assetPak1.ap");
+	std::string mapStr = jparse::GenerateString(aMap, false);
+
+	std::cout << "---Asset Map---" << std::endl;
+
+	std::cout << mapStr << std::endl;
+
+	std::cout << "---------------" << std::endl;
+
 	//ttf file testing
 	ttfFile testFile = ttfParse::ParseTTFFile("/Users/jamesweigand/Desktop/testingFolder/Arial.ttf");
 
@@ -157,15 +168,16 @@ int main() {
 	BitmapParse::WriteToFile("/Users/jamesweigand/Desktop/testingFolder/testBmpOut.bmp", &testBmp);
 	delete[] testBmp.data;
 
-	Bitmap ttfBitmap;
+	//Bitmap ttfBitmap;
 
-	Glyph tGlyph = ttfParse::ReadTTFGlyph("/Users/jamesweigand/Desktop/testingFolder/Arial.ttf", 72u);
+	//Glyph tGlyph = ttfParse::ReadTTFGlyph("/Users/jamesweigand/Desktop/testingFolder/Arial.ttf", 72u);
 	
-	ttfRender::RenderGlyphToBitmap(tGlyph, &ttfBitmap, 0.1f);
+	//ttfRender::RenderGlyphToBitmap(tGlyph, &ttfBitmap, 0.1f);
 
-	i32 errCode = BitmapParse::WriteToFile("/Users/jamesweigand/Desktop/testingFolder/testGlyph.bmp", &ttfBitmap);
+	//i32 errCode = BitmapParse::WriteToFile("/Users/jamesweigand/Desktop/testingFolder/testGlyph.bmp", &ttfBitmap);
 
-	std::cout << "BMP ERROR: " << errCode << std::endl;
+	//std::cout << "BMP ERROR: " << errCode << std::endl;
+
 
 	return 0;
 } 

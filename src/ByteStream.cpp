@@ -47,8 +47,8 @@ ByteStream::ByteStream()
 
 byte ByteStream::readByte()
 {
-    if (this->readPos >= this->len - 1)
-        return NULL;
+    if (this->readPos >= this->len) //Note to self, this has broken things ;-;
+        return 0;
 
     return this->bytes[this->readPos++];
 }
@@ -56,7 +56,7 @@ byte ByteStream::readByte()
 unsigned long long ByteStream::readBytesAsVal(size_t nBytes)
 {
     if (nBytes <= 0)
-        return NULL;
+        return 0;
     unsigned long long res = 0u;
     switch (this->mode)
     {
@@ -216,8 +216,8 @@ const char *ByteStream::readCStr(size_t len) {
     ZeroMem(_by, len);
 
     do {
-        *cur = (char) this->readByte();
-    } while (++cur != e);
+        *cur++ = (char) this->readByte();
+    } while (cur != e);
 
     return const_cast<const char*>(_by);
 }

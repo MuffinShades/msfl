@@ -132,17 +132,18 @@ void AssetContainer::SetAssetData(Asset a) {
     }
 }
 
-Asset construct_asset(byte *data, size_t sz) {
+Asset construct_asset(byte *data, size_t sz, AssetDescriptor desc = {}) {
     assert(sz > 0);
     Asset res;
     res.bytes = new byte[sz];
     memcpy(res.bytes, data, sz);
     res.sz = sz;
+    res.inf = desc;
     return res;
 }
 
 //add asset to a file
-void AssetStruct::AddAsset(std::string path, byte *data, size_t sz) {
+void AssetStruct::AddAsset(std::string path, byte *data, size_t sz, AssetDescriptor desc) {
     if (data == nullptr || sz <= 0 || path.length() <= 0) //data check
         return;
 
@@ -167,8 +168,10 @@ void AssetStruct::AddAsset(std::string path, byte *data, size_t sz) {
     if (current == nullptr)
         return;
 
+    desc.aId = current->GetId();
+
     current->SetAssetData(
-        construct_asset(data, sz)
+        construct_asset(data, sz, desc)
     );
 }
 
@@ -214,6 +217,14 @@ void AssetStruct::AddAsset(std::string path, std::string src) {
 
     //get file contents
     arr_container<byte> fDat = FileWriter::ReadBytesFromBinFile(src);
+    FileInfo fInfo = FilePath_int::getFileInfo(src);
+
+    AssetDescriptor fDesc = {
+        .created = fInfo.creationDate,
+        .modified = fInfo.modifiedDate,
+        .fname = fInfo.name,
+        .fileType = fInfo.type
+    };
 
     std::cout << "FDAT SZ: " << fDat.sz << std::endl;
 
@@ -225,20 +236,22 @@ void AssetStruct::AddAsset(std::string path, std::string src) {
     }
 
     //add le asset
-    this->AddAsset(path, fDat.dat, fDat.sz);
+    this->AddAsset(path, fDat.dat, fDat.sz, fDesc);
     delete[] fDat.dat;
 }
 
 //function to add a asset
-void AssetContainer::AddAsset(std::string id, byte *data, size_t sz) {
+void AssetContainer::AddAsset(std::string id, byte *data, size_t sz, AssetDescriptor desc) {
     for (auto* n : this->assets) {
         if (n->id == id)
             return;
     }
 
+    desc.aId = id;
+
     AssetContainer *item = this->AddContainer(id);
     item->SetAssetData(
-        construct_asset(data, sz)
+        construct_asset(data, sz, desc)
     );
 }
 

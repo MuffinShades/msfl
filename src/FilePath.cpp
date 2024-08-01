@@ -57,6 +57,8 @@ FileInfo FilePath_int::getFileInfo(std::string path) {
 
     struct stat r;
 
+    FileInfo res;
+
     if (stat(path.c_str(), &r) == 0) {
 
         //get creation times and stuff
@@ -64,5 +66,14 @@ FileInfo FilePath_int::getFileInfo(std::string path) {
              cDate = r.st_ctime;
 
         //convert times into dates
+        res = {
+            .creationDate = Date(cDate),
+            .modifiedDate = Date(mDate)
+        };
     }
+
+    res.name = FilePath_int::getFileName(path);
+    res.type = FilePath_int::getFileType(path);
+
+    return res;
 }

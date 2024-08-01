@@ -18,6 +18,7 @@
 #include "ByteStream.hpp"
 #include "FileWriter.h"
 #include "Date.hpp"
+#include "FilePath.hpp"
 
 struct AssetDescriptor {
     size_t sz = 0;
@@ -53,7 +54,7 @@ public:
         return &this->_assetData;
     };
     void SetAssetData(Asset a);
-    void AddAsset(std::string id, byte *data, size_t sz);
+    void AddAsset(std::string id, byte *data, size_t sz, AssetDescriptor desc = {});
     void AddAsset(std::string id, std::string fSrc);
     void AddAsset(std::string id, AssetDescriptor desc);
     AssetContainer *AddContainer(std::string id);
@@ -74,7 +75,7 @@ private:
     AssetContainer *map;
 public:
     Asset GetAsset(std::string path);
-    void AddAsset(std::string path, byte *data, size_t sz);
+    void AddAsset(std::string path, byte *data, size_t sz, AssetDescriptor desc = {});
     void AddAsset(std::string path, std::string fSrc);
     void AddAsset(std::string path, AssetDescriptor desc);
     AssetContainer *GetRoot() {

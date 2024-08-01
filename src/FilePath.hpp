@@ -25,6 +25,7 @@ struct FileInfo {
 };
 
 class FilePath_int {
+public:
     static std::string getFileType(std::string path);
     static std::string getFileName(std::string path);
     static FileInfo getFileInfo(std::string path);
